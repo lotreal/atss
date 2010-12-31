@@ -1,0 +1,205 @@
+#!/bin/bash
+source ${0%/*}/config.sh
+cd ${downloads}
+
+echo 安装Nginx 0.8.46
+
+echo 1.安装Nginx所需的pcre库：
+rm pcre-8.10/ -rf
+tar zxvf pcre-8.10.tar.gz
+cd pcre-8.10/
+./configure # --build=i686-linux-gnu
+make && make install
+cd ../
+
+echo 2.安装Nginx
+rm nginx-0.8.54/ -rf
+tar zxvf nginx-0.8.54.tar.gz
+cd nginx-0.8.54/
+./configure --user=www --group=www --prefix=${nginx_install} --with-http_stub_status_module --with-http_ssl_module
+# nano objs/Makefile
+# 删除 -Werror 才编译成功
+make && make install
+cd ../
+
+
+echo 3.创建Nginx日志目录
+mkdir -p /data1/logs
+chmod +w /data1/logs
+chown -R www:www /data1/logs
+
+
+echo 4.创建Nginx配置文件
+echo 在${nginx_install}/conf/目录中创建nginx.conf文件：
+rm -f ${nginx_install}/conf/nginx.conf
+cat <<'EOF' > ${nginx_install}/conf/nginx.conf
+user  www www;
+
+worker_processes 4;
+
+error_log  /data1/logs/nginx_error.log  crit;
+
+pid        ${nginx_install}/nginx.pid;
+EOF
+cat <<'EOF' >> ${nginx_install}/conf/nginx.conf
+#Specifies the value for maximum file descriptors that can be opened by this process. 
+worker_rlimit_nofile 65535;
+
+events 
+{
+    use epoll;
+    worker_connections 65535;
+}
+
+http 
+{
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    #charset  gb2312;
+    
+    server_names_hash_bucket_size 128;
+    client_header_buffer_size 32k;
+    large_client_header_buffers 4 32k;
+    client_max_body_size 8m;
+    
+    sendfile on;
+    tcp_nopush     on;
+
+    keepalive_timeout 60;
+
+    tcp_nodelay on;
+
+    fastcgi_connect_timeout 300;
+    fastcgi_send_timeout 300;
+    fastcgi_read_timeout 300;
+    fastcgi_buffer_size 64k;
+    fastcgi_buffers 4 64k;
+    fastcgi_busy_buffers_size 128k;
+    fastcgi_temp_file_write_size 128k;
+
+    gzip on;
+    gzip_min_length  1k;
+    gzip_buffers     4 16k;
+    gzip_http_version 1.0;
+    gzip_comp_level 2;
+    gzip_types       text/plain application/x-javascript text/css application/xml;
+    gzip_vary on;
+
+    #limit_zone  crawler  $binary_remote_addr  10m;
+
+    server
+    {
+        listen       8080;
+        root  /data0/htdocs/www;
+        location /
+        {
+            deny all;
+        }
+    }
+    
+    server
+    {
+        listen       27654;
+        root  /data0/htdocs/www/phpMyAdmin;
+        index index.html index.htm index.php;
+
+        #limit_conn   crawler  20;    
+
+        location /
+        {
+            index index.html index.htm index.php;
+        }
+        
+        location ~ .*\.(php|php5)?$
+        {      
+            #fastcgi_pass  unix:/tmp/php-cgi.sock;
+            fastcgi_pass  127.0.0.1:9000;
+            fastcgi_index index.php;
+            include fcgi.conf;
+        }
+        
+        location ~ .*\.(gif|jpg|jpeg|png|bmp|swf)$
+        {
+            expires      30d;
+        }
+
+        location ~ .*\.(js|css)?$
+        {
+            expires      1h;
+        }    
+
+        log_format  access  '$remote_addr - $remote_user [$time_local] "$request" '
+        '$status $body_bytes_sent "$http_referer" '
+        '"$http_user_agent" $http_x_forwarded_for';
+        access_log  /data1/logs/access.log  access;
+    }
+
+    server
+    {
+        listen       8008;
+        server_name  www.cqq.com *.cqq.com;
+        root  /data0/htdocs/cqq;
+        index index.html index.htm index.php;
+
+        #limit_conn   crawler  20;    
+
+        location /
+        {
+            index index.html index.htm index.php;
+        }
+        
+        location ~ .*\.(php|php5)?$
+        {      
+            #fastcgi_pass  unix:/tmp/php-cgi.sock;
+            fastcgi_pass  127.0.0.1:9000;
+            fastcgi_index index.php;
+            include fcgi.conf;
+        }
+        
+        location ~ .*\.(gif|jpg|jpeg|png|bmp|swf)$
+        {
+            expires      30d;
+        }
+
+        location ~ .*\.(js|css)?$
+        {
+            expires      1h;
+        }    
+
+        access_log  /data1/logs/cqq_access.log  access;
+    }
+}
+EOF
+
+
+echo 在${nginx_install}/conf/目录中创建fcgi.conf文件：
+cat <<'EOF' > ${nginx_install}/conf/fcgi.conf
+fastcgi_param  GATEWAY_INTERFACE  CGI/1.1;
+fastcgi_param  SERVER_SOFTWARE    nginx;
+
+fastcgi_param  QUERY_STRING       $query_string;
+fastcgi_param  REQUEST_METHOD     $request_method;
+fastcgi_param  CONTENT_TYPE       $content_type;
+fastcgi_param  CONTENT_LENGTH     $content_length;
+
+fastcgi_param  SCRIPT_FILENAME    $document_root$fastcgi_script_name;
+fastcgi_param  SCRIPT_NAME        $fastcgi_script_name;
+fastcgi_param  REQUEST_URI        $request_uri;
+fastcgi_param  DOCUMENT_URI       $document_uri;
+fastcgi_param  DOCUMENT_ROOT      $document_root;
+fastcgi_param  SERVER_PROTOCOL    $server_protocol;
+
+fastcgi_param  REMOTE_ADDR        $remote_addr;
+fastcgi_param  REMOTE_PORT        $remote_port;
+fastcgi_param  SERVER_ADDR        $server_addr;
+fastcgi_param  SERVER_PORT        $server_port;
+fastcgi_param  SERVER_NAME        $server_name;
+
+# PHP only, required if PHP was built with --enable-force-cgi-redirect
+fastcgi_param  REDIRECT_STATUS    200;
+EOF
+
+echo 启动Nginx
+ulimit -SHn 65535
+${nginx_install}/sbin/nginx

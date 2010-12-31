@@ -1,0 +1,276 @@
+#!/bin/bash
+source ${0%/*}/config.sh
+cd ${downloads}
+
+echo 编译安装PHP5扩展模块
+rm memcache-2.2.5/ -rf
+tar zxvf memcache-2.2.5.tgz
+cd memcache-2.2.5/
+${php_install}/bin/phpize
+./configure --with-php-config=${php_install}/bin/php-config # --build=i686-linux-gnu
+make
+make install
+cd ../
+
+rm eaccelerator-0.9.6.1/ -rf
+tar jxvf eaccelerator-0.9.6.1.tar.bz2
+cd eaccelerator-0.9.6.1/
+${php_install}/bin/phpize
+./configure --enable-eaccelerator=shared --with-php-config=${php_install}/bin/php-config # --build=i686-linux-gnu
+make
+make install
+cd ../
+
+rm PDO_MYSQL-1.0.2/ -rf
+tar zxvf PDO_MYSQL-1.0.2.tgz
+cd PDO_MYSQL-1.0.2/
+${php_install}/bin/phpize
+./configure --with-php-config=${php_install}/bin/php-config
+--with-pdo-mysql=${mysql_install} # --build=i686-linux-gnu
+make
+make install
+cd ../
+
+rm ImageMagick-6.5.1-2/ -rf
+tar zxvf ImageMagick.tar.gz
+cd ImageMagick-6.5.1-2/
+./configure # --build=i686-linux-gnu
+make
+make install
+cd ../
+
+rm imagick-2.3.0/ -rf
+tar zxvf imagick-2.3.0.tgz
+cd imagick-2.3.0/
+${php_install}/bin/phpize
+./configure --with-php-config=${php_install}/bin/php-config # --build=i686-linux-gnu
+# error
+# checking for MagickWand.h header file... configure: error: Cannot locate header file MagickWand.h
+make
+make install
+cd ../
+
+
+sed -i "s#extension_dir = \"./\"#extension_dir = \"${php_install}/lib/php/extensions/no-debug-non-zts-20060613/\"\nextension = \"memcache.so\"\nextension = \"pdo_mysql.so\"\nextension = \"imagick.so\"\n#" ${php_install}/etc/php.ini
+sed -i "s#output_buffering = Off#output_buffering = On#" ${php_install}/etc/php.ini
+sed -i "s#; always_populate_raw_post_data = On#always_populate_raw_post_data = On#g" ${php_install}/etc/php.ini
+sed -i "s#; cgi.fix_pathinfo=0#cgi.fix_pathinfo=0#g" ${php_install}/etc/php.ini
+
+echo 配置eAccelerator加速PHP：
+mkdir -p ${zend_install}
+cat <<EOF > ${php_install}/etc/php.ini
+[eaccelerator]
+zend_extension="${php_install}/lib/php/extensions/no-debug-non-zts-20060613/eaccelerator.so"
+eaccelerator.shm_size="64"
+eaccelerator.cache_dir="${zend_install}"
+eaccelerator.enable="1"
+eaccelerator.optimizer="1"
+eaccelerator.check_mtime="1"
+eaccelerator.debug="0"
+eaccelerator.filter=""
+eaccelerator.shm_max="0"
+eaccelerator.shm_ttl="3600"
+eaccelerator.shm_prune_period="3600"
+eaccelerator.shm_only="0"
+eaccelerator.compress="1"
+eaccelerator.compress_level="9"
+EOF
+
+
+echo 7、创建www用户和组，以及供blog.s135.com和www.s135.com两个虚拟主机使用的目录
+/usr/sbin/groupadd www
+/usr/sbin/useradd -g www www
+mkdir -p /data0/htdocs/blog
+chmod +w /data0/htdocs/blog
+chown -R www:www /data0/htdocs/blog
+mkdir -p /data0/htdocs/www
+chmod +w /data0/htdocs/www
+chown -R www:www /data0/htdocs/www
+
+echo 8、创建php-fpm配置文件（php-fpm是为PHP打的一个FastCGI管理补丁，可以平滑变更php.ini配置而无需重启php-cgi）：
+echo 在${php_install}/etc/目录中创建php-fpm.conf文件：
+rm -f ${php_install}/etc/php-fpm.conf
+
+# 输入以下内容（如果您安装 Nginx + PHP 用于程序调试，请将以下的<value name=
+# "display_errors">0</value>改为<value name="display_errors">1</value>，以便显示
+# PHP错误信息，否则，Nginx 会报状态为500的空白错误页）：
+
+cat <<'EOF' > ${php_install}/etc/php-fpm.conf
+<?xml version="1.0" ?>
+<configuration>
+
+  All relative paths in this config are relative to php's install prefix
+
+  <section name="global_options">
+
+    Pid file
+    <value name="pid_file">${php_install}/logs/php-fpm.pid</value>
+
+    Error log file
+    <value name="error_log">${php_install}/logs/php-fpm.log</value>
+
+    Log level
+    <value name="log_level">notice</value>
+
+    When this amount of php processes exited with SIGSEGV or SIGBUS ...
+    <value name="emergency_restart_threshold">10</value>
+
+    ... in a less than this interval of time, a graceful restart will be
+initiated.
+    Useful to work around accidental curruptions in accelerator's shared
+memory.
+    <value name="emergency_restart_interval">1m</value>
+
+    Time limit on waiting child's reaction on signals from master
+    <value name="process_control_timeout">5s</value>
+
+    Set to 'no' to debug fpm
+    <value name="daemonize">yes</value>
+
+  </section>
+
+  <workers>
+
+    <section name="pool">
+
+      Name of pool. Used in logs and stats.
+      <value name="name">default</value>
+
+      Address to accept fastcgi requests on.
+      Valid syntax is 'ip.ad.re.ss:port' or just 'port' or '/path/to/unix/
+socket'
+      <value name="listen_address">127.0.0.1:9000</value>
+
+      <value name="listen_options">
+
+        Set listen(2) backlog
+        <value name="backlog">-1</value>
+
+        Set permissions for unix socket, if one used.
+        In Linux read/write permissions must be set in order to allow
+connections from web server.
+        Many BSD-derrived systems allow connections regardless of permissions.
+        <value name="owner"></value>
+        <value name="group"></value>
+        <value name="mode">0666</value>
+      </value>
+
+      Additional php.ini defines, specific to this pool of workers.
+      <value name="php_defines">
+        <value name="sendmail_path">/usr/sbin/sendmail -t -i</value>
+        <value name="display_errors">0</value>
+      </value>
+
+      Unix user of processes
+      <value name="user">www</value>
+
+      Unix group of processes
+      <value name="group">www</value>
+
+      Process manager settings
+      <value name="pm">
+
+        Sets style of controling worker process count.
+        Valid values are 'static' and 'apache-like'
+        <value name="style">static</value>
+
+        Sets the limit on the number of simultaneous requests that will be
+served.
+        Equivalent to Apache MaxClients directive.
+        Equivalent to PHP_FCGI_CHILDREN environment in original php.fcgi
+        Used with any pm_style.
+        <value name="max_children">128</value>
+
+        Settings group for 'apache-like' pm style
+        <value name="apache_like">
+
+          Sets the number of server processes created on startup.
+          Used only when 'apache-like' pm_style is selected
+          <value name="StartServers">20</value>
+
+          Sets the desired minimum number of idle server processes.
+          Used only when 'apache-like' pm_style is selected
+          <value name="MinSpareServers">5</value>
+
+          Sets the desired maximum number of idle server processes.
+          Used only when 'apache-like' pm_style is selected
+          <value name="MaxSpareServers">35</value>
+
+        </value>
+
+      </value>
+
+      The timeout (in seconds) for serving a single request after which the
+worker process will be terminated
+      Should be used when 'max_execution_time' ini option does not stop script
+execution for some reason
+      '0s' means 'off'
+      <value name="request_terminate_timeout">0s</value>
+
+      The timeout (in seconds) for serving of single request after which a php
+backtrace will be dumped to slow.log file
+      '0s' means 'off'
+      <value name="request_slowlog_timeout">0s</value>
+
+      The log file for slow requests
+      <value name="slowlog">logs/slow.log</value>
+
+      Set open file desc rlimit
+      <value name="rlimit_files">65535</value>
+
+      Set max core size rlimit
+      <value name="rlimit_core">0</value>
+
+      Chroot to this directory at the start, absolute path
+      <value name="chroot"></value>
+
+      Chdir to this directory at the start, absolute path
+      <value name="chdir"></value>
+
+      Redirect workers' stdout and stderr into main error log.
+      If not set, they will be redirected to /dev/null, according to FastCGI
+specs
+      <value name="catch_workers_output">yes</value>
+
+      How much requests each process should execute before respawn.
+      Useful to work around memory leaks in 3rd party libraries.
+      For endless request processing please specify 0
+      Equivalent to PHP_FCGI_MAX_REQUESTS
+      <value name="max_requests">1024</value>
+
+      Comma separated list of ipv4 addresses of FastCGI clients that allowed to
+connect.
+      Equivalent to FCGI_WEB_SERVER_ADDRS environment in original php.fcgi
+(5.2.2+)
+      Makes sense only with AF_INET listening socket.
+      <value name="allowed_clients">127.0.0.1</value>
+
+      Pass environment variables like LD_LIBRARY_PATH
+      All \$VARIABLEs are taken from current environment
+      <value name="environment">
+        <value name="HOSTNAME">\$HOSTNAME</value>
+        <value name="PATH">/usr/local/bin:/usr/bin:/bin</value>
+        <value name="TMP">/tmp</value>
+        <value name="TMPDIR">/tmp</value>
+        <value name="TEMP">/tmp</value>
+        <value name="OSTYPE">\$OSTYPE</value>
+        <value name="MACHTYPE">\$MACHTYPE</value>
+        <value name="MALLOC_CHECK_">2</value>
+      </value>
+
+    </section>
+
+  </workers>
+
+</configuration>
+EOF
+
+
+echo 9、启动php-cgi进程，监听127.0.0.1的9000端口，进程数为128（如果服务器内存小
+echo 于3GB，可以只开启64个进程），用户为www：
+ulimit -SHn 65535
+${php_install}/sbin/php-fpm start
+
+# 注：${php_install}/sbin/php-fpm还有其他参数，包括：start|stop|
+# quit|restart|reload|logrotate，修改php.ini后不重启php-cgi，重新加载配置文件使用
+# reload。
