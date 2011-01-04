@@ -1,7 +1,9 @@
 #!/bin/bash
 source ${0%/*}/config.sh
 
-rm ${mysql_data} -rf
+echo ========================================
+
+rm ${mysql_data} -ri
 
 echo 创建MySQL数据库存放目录
 mkdir -p ${mysql_data}/${mysql_port}/data/
@@ -109,7 +111,7 @@ EOF
 
 echo 创建管理MySQL数据库的shell脚本：
 
-cat <<EOF > ${mysql_port}_mysql
+cat <<EOF > ${mysql_data}/${mysql_port}/mysql
 #!/bin/bash
 mysql_install=${mysql_install}
 mysql_data=${mysql_data}
@@ -118,7 +120,7 @@ mysql_username=${mysql_username}
 mysql_password=${mysql_password}
 
 EOF
-cat <<'EOF' >> ${mysql_port}_mysql
+cat <<'EOF' >> ${mysql_data}/${mysql_port}/mysql
 function_start_mysql()
 {
     printf "Starting MySQL...\n"
@@ -166,10 +168,11 @@ ${mysql_data}/${mysql_port}/mysql start
 
 echo 创建一个具有root权限的用户（${mysql_username}）和密码（${mysql_password}）
 echo （提示输入密码时直接回车，root 密码将在这里被改为 FXpQxpby5yU3aCq8）
+# TODO: 这里回车，报错：连接不到 mysql
 echo 
 (
-echo "GRANT ALL PRIVILEGES ON *.* TO '${mysql_username}'@'localhost' IDENTIFIED BY '${mysql_password}';"
-echo "GRANT ALL PRIVILEGES ON *.* TO '${mysql_username}'@'127.0.0.1' IDENTIFIED BY '${mysql_password}';"
+echo "GRANT ALL PRIVILEGES ON *.* TO '${mysql_username}'@'localhost' IDENTIFIED BY '${mysql_password}' WITH GRANT OPTION;"
+echo "GRANT ALL PRIVILEGES ON *.* TO '${mysql_username}'@'127.0.0.1' IDENTIFIED BY '${mysql_password}' WITH GRANT OPTION;"
 echo "use mysql;"
 echo "update user set password='*DC4812F3823E7A28D55A1164E55029E735454AF9' where user='root';"
 echo "flush privileges;"

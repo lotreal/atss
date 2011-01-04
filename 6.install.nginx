@@ -1,26 +1,18 @@
 #!/bin/bash
 source ${0%/*}/config.sh
-cd ${downloads}
-
-echo 安装Nginx 0.8.46
 
 echo 1.安装Nginx所需的pcre库：
-rm pcre-8.10/ -rf
-tar zxvf pcre-8.10.tar.gz
-cd pcre-8.10/
+cd ${build_dir}/${pcre_pkg}
 ./configure # --build=i686-linux-gnu
 make && make install
-cd ../
+
 
 echo 2.安装Nginx
-rm nginx-0.8.54/ -rf
-tar zxvf nginx-0.8.54.tar.gz
-cd nginx-0.8.54/
+cd ${build_dir}/${nginx_pkg}
 ./configure --user=www --group=www --prefix=${nginx_install} --with-http_stub_status_module --with-http_ssl_module
 # nano objs/Makefile
 # 删除 -Werror 才编译成功
 make && make install
-cd ../
 
 
 echo 3.创建Nginx日志目录
@@ -32,7 +24,7 @@ chown -R www:www /data1/logs
 echo 4.创建Nginx配置文件
 echo 在${nginx_install}/conf/目录中创建nginx.conf文件：
 rm -f ${nginx_install}/conf/nginx.conf
-cat <<'EOF' > ${nginx_install}/conf/nginx.conf
+cat <<EOF > ${nginx_install}/conf/nginx.conf
 user  www www;
 
 worker_processes 4;

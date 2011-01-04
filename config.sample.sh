@@ -1,11 +1,11 @@
 #!/bin/bash
-downloads=/root/soft/
+downloads=/data0/software
 
 mysql_install=/usr/local/webserver/mysql
 mysql_data=/data0/mysql
 mysql_port=3306
 mysql_username="admin"
-mysql_password=""
+mysql_password="mVctQWXCYafn8qYQ"
 
 php_install=/usr/local/webserver/php
 zend_install=/usr/local/webserver/eaccelerator_cache
