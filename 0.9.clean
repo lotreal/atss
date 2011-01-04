@@ -1,0 +1,24 @@
+#!/bin/bash
+source ${0%/*}/config.sh
+
+\rm ${build_dir} -r
+mkdir -p ${build_dir}
+tarf()
+{
+    echo \>\> 将 $1 解压缩到 ${build_dir}
+    tar xf $1 -C ${build_dir}
+}
+
+tarf ${downloads}/${nginx_pkg}.tar.gz 
+tarf ${downloads}/${mysql_pkg}.tar.gz 
+tarf ${downloads}/${php_pkg}.tar.gz 
+tarf ${downloads}/${libiconv_pkg}.tar.gz 
+tarf ${downloads}/${libmcrypt_pkg}.tar.gz 
+tarf ${downloads}/${mcrypt_pkg}.tar.gz 
+tarf ${downloads}/${mhash_pkg}.tar.gz 
+tarf ${downloads}/${pcre_pkg}.tar.gz 
+tarf ${downloads}/${eaccelerator_pkg}.tar.bz2 
+tarf ${downloads}/${imagemagick_pkg}.tar.gz 
+tarf ${downloads}/${pecl_memcache_pkg}.tgz 
+tarf ${downloads}/${pecl_pdo_mysql_pkg}.tgz 
+tarf ${downloads}/${pecl_imagick_pkg}.tgz 

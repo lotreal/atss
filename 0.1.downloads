@@ -1,0 +1,29 @@
+#!/bin/bash
+source ${0%/*}/config.sh
+
+echo 下载所需安装包
+echo tips: 使用 screen 监视下载完成
+
+mkdir -p ${downloads}
+cd ${downloads}
+
+cat > urls.txt <<EOF
+${nginx_url}
+${mysql_url}
+${php_url}
+${php_fpm_url}
+${libiconv_url}
+${libmcrypt_url}
+${mcrypt_url}
+${mhash_url}
+${pcre_url}
+${eaccelerator_url}
+${imagemagick_url}
+${pecl_memcache_url}
+${pecl_pdo_mysql_url}
+${pecl_imagick_url}
+EOF
+
+#wget -i urls.txt -c -o downloads.log
+cat urls.txt
+echo 下载所需安装包
