@@ -78,16 +78,12 @@ http
     gzip_vary on;
 
     #limit_zone  crawler  $binary_remote_addr  10m;
-
-    server
-    {
-        listen       80;
-        root  /data0/htdocs/www;
-        location /
-        {
-            deny all;
-        }
-    }
+    server 
+    { 
+        listen 80 default; 
+        server_name _; 
+        return 500; 
+    } 
     
     server
     {
