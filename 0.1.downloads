@@ -1,6 +1,7 @@
 #!/bin/bash
 source ${0%/*}/config.sh
 
+echo ========================================
 echo 下载所需安装包
 echo tips: 使用 screen 监视下载完成
 
@@ -24,6 +25,7 @@ ${pecl_pdo_mysql_url}
 ${pecl_imagick_url}
 EOF
 
-#wget -i urls.txt -c -o downloads.log
+echo 下载列表：
 cat urls.txt
-echo 下载所需安装包
+echo 开始下载：
+wget -i urls.txt -c -o downloads.log

@@ -7,7 +7,7 @@ touch /etc/vsftpd/vsftpd.chroot_list
 touch /var/log/vsftpd.log
 mkdir /etc/vsftpd/user_config
 
-useradd ftpd -d /data0/htdocs/www/ -s /sbin/nologin
+useradd ftpd -d /data0/htdocs/cqq/ -s /sbin/nologin
 echo 'ftpd' >> /etc/vsftpd/vsftpd.chroot_list 
 
 cat <<'EOF' > /etc/vsftpd/passwd.txt 
@@ -69,3 +69,15 @@ anon_other_write_enable=YES
 EOF
 
 service vsftpd restart
+
+cat <<EOF
+Tips:
+ftp服务器连接失败,错误提示:
+500 OOPS: cannot change directory:/home/*******
+500 OOPS: child died
+
+解决方法:
+在终端输入命令：
+setsebool ftpd_disable_trans 1 
+service vsftpd restart
+EOF

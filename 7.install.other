@@ -1,7 +1,7 @@
 #!/bin/bash
 source ${0%/*}/config.sh
-cd ${downloads}
 
+echo ========================================
 echo 四、配置开机自动启动Nginx + PHP
 cat <<EOF >> /etc/rc.local
 ulimit -SHn 65535
@@ -78,5 +78,6 @@ echo 2、设置crontab，每天凌晨00:00切割nginx访问日志
 echo "00 00 * * * /bin/bash  ${nginx_install}/sbin/cut_nginx_log.sh" >> /etc/crontab
 
 
-ln -s ${mysql_data}/${mysql_port}/mysql /root/bin/
-ln -s ${nginx_install}/sbin/nginx /root/bin/
+mkdir $HOME/bin
+ln -s ${mysql_data}/${mysql_port}/mysql $HOME/bin
+ln -s ${nginx_install}/sbin/nginx $HOME/bin

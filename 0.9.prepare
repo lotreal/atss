@@ -1,6 +1,8 @@
 #!/bin/bash
 source ${0%/*}/config.sh
 
+echo ========================================
+echo 解压缩相关文件包
 \rm ${build_dir} -r
 mkdir -p ${build_dir}
 tarf()

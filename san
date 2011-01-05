@@ -1,7 +1,8 @@
 #!/bin/bash
 source ${0%/*}/config.sh
 
-cat <<EOF > ut_nginx_log.sh
+echo 1、创建脚本${nginx_install}/sbin/cut_nginx_log.sh
+cat <<EOF > ${nginx_install}/sbin/cut_nginx_log.sh
 #!/bin/bash
 # This script run at 00:00
 

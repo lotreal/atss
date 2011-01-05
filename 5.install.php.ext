@@ -1,17 +1,19 @@
 #!/bin/bash
 source ${0%/*}/config.sh
 
+echo ========================================
 echo 编译安装PHP5扩展模块
+
 cd ${build_dir}/${pecl_memcache_pkg}
 ${php_install}/bin/phpize
-./configure --with-php-config=${php_install}/bin/php-config # --build=i686-linux-gnu
+./configure --with-php-config=${php_install}/bin/php-config
 make
 make install
 
 
 cd ${build_dir}/${eaccelerator_pkg}
 ${php_install}/bin/phpize
-./configure --enable-eaccelerator=shared --with-php-config=${php_install}/bin/php-config # --build=i686-linux-gnu
+./configure --enable-eaccelerator=shared --with-php-config=${php_install}/bin/php-config
 make
 make install
 
@@ -19,22 +21,20 @@ make install
 cd ${build_dir}/${pecl_pdo_mysql_pkg}
 ${php_install}/bin/phpize
 ./configure --with-php-config=${php_install}/bin/php-config
---with-pdo-mysql=${mysql_install} # --build=i686-linux-gnu
+--with-pdo-mysql=${mysql_install}
 make
 make install
 
 
 cd ${build_dir}/${imagemagick_pkg}
-./configure # --build=i686-linux-gnu
+./configure
 make
 make install
 
 
 cd ${build_dir}/${pecl_imagick_pkg}
 ${php_install}/bin/phpize
-./configure --with-php-config=${php_install}/bin/php-config # --build=i686-linux-gnu
-# error
-# checking for MagickWand.h header file... configure: error: Cannot locate header file MagickWand.h
+./configure --with-php-config=${php_install}/bin/php-config
 make
 make install
 
@@ -46,7 +46,8 @@ sed -i "s#; cgi.fix_pathinfo=0#cgi.fix_pathinfo=0#g" ${php_install}/etc/php.ini
 
 echo 配置eAccelerator加速PHP：
 mkdir -p ${zend_install}
-cat <<EOF > ${php_install}/etc/php.ini
+cat <<EOF >> ${php_install}/etc/php.ini
+
 [eaccelerator]
 zend_extension="${php_install}/lib/php/extensions/no-debug-non-zts-20060613/eaccelerator.so"
 eaccelerator.shm_size="64"
@@ -65,12 +66,12 @@ eaccelerator.compress_level="9"
 EOF
 
 
-echo 7、创建www用户和组，以及供blog.s135.com和www.s135.com两个虚拟主机使用的目录
+echo 7、创建www用户和组，以及虚拟主机使用的目录
 /usr/sbin/groupadd www
 /usr/sbin/useradd -g www www
-mkdir -p /data0/htdocs/blog
-chmod +w /data0/htdocs/blog
-chown -R www:www /data0/htdocs/blog
+mkdir -p /data0/htdocs/cqq
+chmod +w /data0/htdocs/cqq
+chown -R www:www /data0/htdocs/cqq
 mkdir -p /data0/htdocs/www
 chmod +w /data0/htdocs/www
 chown -R www:www /data0/htdocs/www

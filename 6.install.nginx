@@ -1,6 +1,7 @@
 #!/bin/bash
 source ${0%/*}/config.sh
 
+echo ========================================
 echo 1.安装Nginx所需的pcre库：
 cd ${build_dir}/${pcre_pkg}
 ./configure # --build=i686-linux-gnu
@@ -23,8 +24,7 @@ chown -R www:www /data1/logs
 
 echo 4.创建Nginx配置文件
 echo 在${nginx_install}/conf/目录中创建nginx.conf文件：
-rm -f ${nginx_install}/conf/nginx.conf
-cat <<EOF > ${nginx_install}/conf/nginx.conf
+cat <<'EOF' > ${nginx_install}/conf/nginx.conf
 user  www www;
 
 worker_processes 4;
@@ -32,8 +32,7 @@ worker_processes 4;
 error_log  /data1/logs/nginx_error.log  crit;
 
 pid        ${nginx_install}/nginx.pid;
-EOF
-cat <<'EOF' >> ${nginx_install}/conf/nginx.conf
+
 #Specifies the value for maximum file descriptors that can be opened by this process. 
 worker_rlimit_nofile 65535;
 
@@ -82,7 +81,7 @@ http
 
     server
     {
-        listen       8080;
+        listen       80;
         root  /data0/htdocs/www;
         location /
         {
@@ -93,7 +92,7 @@ http
     server
     {
         listen       27654;
-        root  /data0/htdocs/www/phpMyAdmin;
+        root  /data0/htdocs/www/phpMyAdmin-3.3.9-all-languages;
         index index.html index.htm index.php;
 
         #limit_conn   crawler  20;    
@@ -129,7 +128,7 @@ http
 
     server
     {
-        listen       8008;
+        listen       80;
         server_name  www.cqq.com *.cqq.com;
         root  /data0/htdocs/cqq;
         index index.html index.htm index.php;
@@ -163,6 +162,7 @@ http
     }
 }
 EOF
+sed -i "s#\${nginx_install}#${nginx_install}#" ${nginx_install}/conf/nginx.conf
 
 
 echo 在${nginx_install}/conf/目录中创建fcgi.conf文件：
