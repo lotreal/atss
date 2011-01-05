@@ -10,9 +10,9 @@ mkdir /etc/vsftpd/user_config
 useradd ftpd -d /data0/htdocs/cqq/ -s /sbin/nologin
 echo 'ftpd' >> /etc/vsftpd/vsftpd.chroot_list 
 
-cat <<'EOF' > /etc/vsftpd/passwd.txt 
-ftpcqq
-12345678
+cat <<EOF > /etc/vsftpd/passwd.txt 
+${ftp_user}
+${ftp_passwd}
 EOF
 
 db_load -T -t hash -f /etc/vsftpd/passwd.txt /etc/vsftpd/user_passwd.db
@@ -31,6 +31,7 @@ account	required	/lib/security/pam_userdb.so	db=/etc/vsftpd/user_passwd
 EOF
 
 cat <<'EOF' >> /etc/vsftpd/vsftpd.conf
+
 listen=YES
 listen_port=27655
 background=YES
@@ -56,9 +57,10 @@ guest_enable=YES
 guest_username=ftpd
 user_config_dir=/etc/vsftpd/user_config
 reverse_lookup_enable=NO
+pasv_promiscuous=YES
 EOF
 
-cat <<'EOF' > /etc/vsftpd/user_config/ftpcqq
+cat <<'EOF' > /etc/vsftpd/user_config/${ftp_user}
 local_root=/data0/htdocs/cqq
 write_enable=YES
 anon_umask=022
