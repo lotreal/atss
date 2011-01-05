@@ -165,6 +165,7 @@ chmod +x ${mysql_data}/${mysql_port}/mysql
 
 echo 启动MySQL：
 ${mysql_data}/${mysql_port}/mysql start
+read -n1 -p "Wait for mysql service start. Press any key to continue..."
 
 echo 创建一个具有root权限的用户（${mysql_username}）和密码（${mysql_password}）
 echo （提示输入密码时直接回车，root 密码将在这里被改为 FXpQxpby5yU3aCq8）
