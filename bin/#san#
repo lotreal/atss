@@ -1,0 +1,19 @@
+#!/bin/bash
+# if [ "$(basename $0)" != "install_all.sh" ]; then
+#     source ${0%/*}/config.sh
+# fi
+
+age=10
+tpl="i m age"
+
+exit
+
+xpath()
+{
+    echo $1 | sed "s/^\([^/]*\)\(.*\)$/\1/"
+}
+
+xpath mysql-5.5.9/
+xpath mysql-5.5.9/888
+xpath mysql-5.5.9/888/
+xpath mysql-5.5.9/888/fdsafasd?fdsa/f

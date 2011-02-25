@@ -4,35 +4,34 @@ source ${0%/*}/config.sh
 echo ========================================
 echo 编译安装PHP5扩展模块
 
-cd ${build_dir}/${pecl_memcache_pkg}
+cd ${dbuild}/${pecl_memcache_pkg}
 ${php_install}/bin/phpize
 ./configure --with-php-config=${php_install}/bin/php-config
 make
 make install
 
 
-cd ${build_dir}/${eaccelerator_pkg}
+cd ${dbuild}/${eaccelerator_pkg}
 ${php_install}/bin/phpize
 ./configure --enable-eaccelerator=shared --with-php-config=${php_install}/bin/php-config
 make
 make install
 
 
-cd ${build_dir}/${pecl_pdo_mysql_pkg}
+cd ${dbuild}/${pecl_pdo_mysql_pkg}
 ${php_install}/bin/phpize
-./configure --with-php-config=${php_install}/bin/php-config
---with-pdo-mysql=${mysql_install}
+./configure --with-php-config=${php_install}/bin/php-config --with-pdo-mysql=${mysql_install}
 make
 make install
 
 
-cd ${build_dir}/${imagemagick_pkg}
+cd ${dbuild}/${imagemagick_pkg}
 ./configure
 make
 make install
 
 
-cd ${build_dir}/${pecl_imagick_pkg}
+cd ${dbuild}/${pecl_imagick_pkg}
 ${php_install}/bin/phpize
 ./configure --with-php-config=${php_install}/bin/php-config
 make

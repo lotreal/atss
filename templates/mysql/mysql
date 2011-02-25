@@ -1,0 +1,44 @@
+#!/bin/bash
+mysql_install=/usr/local/webserver/mysql
+mysql_data=/data0/mysql
+mysql_port=3306
+mysql_username=admin
+mysql_password=mVctQWXCYafn8qYQ
+
+function_start_mysql()
+{
+    printf "Starting MySQL...\n"
+    /bin/sh ${mysql_install}/bin/mysqld_safe --defaults-file=${mysql_data}/${mysql_port}/my.cnf 2>&1 > /dev/null &
+}
+
+function_stop_mysql()
+{
+    printf "Stoping MySQL...\n"
+    ${mysql_install}/bin/mysqladmin -u ${mysql_username} -p${mysql_password} -S /tmp/mysql.sock shutdown
+}
+
+function_restart_mysql()
+{
+    printf "Restarting MySQL...\n"
+    function_stop_mysql
+    sleep 5
+    function_start_mysql
+}
+
+function_kill_mysql()
+{
+    kill -9 $(ps -ef | grep 'bin/mysqld_safe' | grep ${mysql_port} | awk '{printf $2}')
+    kill -9 $(ps -ef | grep 'libexec/mysqld' | grep ${mysql_port} | awk '{printf $2}')
+}
+
+if [ "$1" = "start" ]; then
+    function_start_mysql
+elif [ "$1" = "stop" ]; then
+    function_stop_mysql
+elif [ "$1" = "restart" ]; then
+    function_restart_mysql
+elif [ "$1" = "kill" ]; then
+    function_kill_mysql
+else
+    printf "Usage: ${mysql_data}/${mysql_port}/mysql {start|stop|restart|kill}\n"
+fi

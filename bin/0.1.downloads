@@ -1,0 +1,40 @@
+#!/bin/bash
+source ${0%/*}/config.sh
+
+download_log=${dlog}/download.log
+
+download_pkgs ()
+{
+    cat <<EOF
+下载安装包
+========================================
+目录：${dbin}
+日志：${download_log}
+EOF
+
+    mkdir -p ${dbin}
+    cd ${dbin}
+
+    urls="${nginx_url}
+${mysql_url}
+${php_url}
+${php_fpm_url}
+${libiconv_url}
+${libmcrypt_url}
+${mcrypt_url}
+${mhash_url}
+${pcre_url}
+${eaccelerator_url}
+${imagemagick_url}
+${pecl_memcache_url}
+${pecl_pdo_mysql_url}
+${pecl_imagick_url}"
+
+    for url in $urls
+    do
+        echo $url
+        wget -c $url
+    done
+}
+
+download_pkgs | tee ${download_log}

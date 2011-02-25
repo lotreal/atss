@@ -8,7 +8,7 @@ echo 编译安装 ${mysql_pkg}
 /usr/sbin/useradd -g mysql mysql
 
 rm ${mysql_install} -ri
-cd ${build_dir}/${mysql_pkg}
+cd ${dbuild}/${mysql_pkg}
 
 ./configure --prefix=${mysql_install} --enable-assembler --with-extra-charsets=complex --enable-thread-safe-client --with-big-tables --with-readline --with-ssl --with-embedded-server --enable-local-infile --with-plugins=partition,innobase,myisammrg
 make && make install

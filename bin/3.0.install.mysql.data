@@ -5,7 +5,7 @@ echo ========================================
 
 rm ${mysql_data} -ri
 
-echo 创建MySQL数据库存放目录
+echo 创建 mysql 数据库存放目录
 mkdir -p ${mysql_data}/${mysql_port}/data/
 mkdir -p ${mysql_data}/${mysql_port}/binlog/
 mkdir -p ${mysql_data}/${mysql_port}/relaylog/
@@ -165,22 +165,3 @@ chmod +x ${mysql_data}/${mysql_port}/mysql
 
 echo 启动MySQL：
 ${mysql_data}/${mysql_port}/mysql start
-
-
-echo 创建一个具有root权限的用户（${mysql_username}）和密码（${mysql_password}）
-echo （提示输入密码时直接回车)
-# TODO: 这里回车，报错：连接不到 mysql
-read -n1 -p "Wait for mysql service start. Press any key to continue..."
-
-echo 
-(
-echo "GRANT ALL PRIVILEGES ON *.* TO '${mysql_username}'@'localhost' IDENTIFIED BY '${mysql_password}' WITH GRANT OPTION;"
-echo "GRANT ALL PRIVILEGES ON *.* TO '${mysql_username}'@'127.0.0.1' IDENTIFIED BY '${mysql_password}' WITH GRANT OPTION;"
-echo "use mysql;"
-echo "update user set password='*DC4812F3823E7A28D55A1164E55029E735454AF9' where user='root';"
-echo "flush privileges;"
-echo "\q"
-) | ${mysql_install}/bin/mysql -u root -p -S /tmp/mysql.sock
-
-echo （可选）停止MySQL：
-echo ${mysql_data}/${mysql_port}/mysql stop

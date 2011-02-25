@@ -1,0 +1,20 @@
+#!/bin/bash
+source ${0%/*}/config.sh
+
+cat <<EOF
+这里将创建一个具有所有权限的用户 ${mysql_username} 和密码 ${mysql_password}
+注：目前 root 密码为空
+    先启动MySQL： ${mysql_data}/${mysql_port}/mysql start
+EOF
+
+read -n1 -p "Wait for mysql service start. Press any key to continue..."
+echo 
+(
+echo "GRANT ALL PRIVILEGES ON *.* TO '${mysql_username}'@'localhost' IDENTIFIED BY '${mysql_password}' WITH GRANT OPTION;"
+echo "GRANT ALL PRIVILEGES ON *.* TO '${mysql_username}'@'127.0.0.1' IDENTIFIED BY '${mysql_password}' WITH GRANT OPTION;"
+echo "use mysql;"
+echo "update user set password='*DC4812F3823E7A28D55A1164E55029E735454AF9' where user='root';"
+echo "flush privileges;"
+echo "\q"
+) | ${mysql_install}/bin/mysql -u root -p -S /tmp/mysql.sock
+echo 密码更改成功

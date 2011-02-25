@@ -1,5 +1,5 @@
 #!/bin/bash
-downloads=/data0/software
+dbin=/data0/software
 
 mysql_install=/usr/local/webserver/mysql
 mysql_data=/data0/mysql

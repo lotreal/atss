@@ -1,16 +1,26 @@
 #!/bin/bash
 source ${0%/*}/config.sh
+install_php_libiconv()
+{
+    xprepare $php_libiconv
 
-echo ========================================
-echo 编译安装PHP 5.2.14所需的支持库
+    ./configure --prefix=/usr/local
+    xcheck "conf" $?
 
-cd ${build_dir}/${libiconv_pkg}
-./configure --prefix=/usr/local
-make
-make install
+    make
+    xcheck "make" $?
+
+    make install
+    xcheck "make install" $?
+}
+
+install_php_libiconv | tee -a ${log_dir}/install.log
+exit
 
 
-cd ${build_dir}/${libmcrypt_pkg}
+
+
+cd ${dbuild}/${libmcrypt_pkg}
 ./configure
 make
 make install
@@ -21,7 +31,7 @@ make
 make install
 
 
-cd ${build_dir}/${mhash_pkg}
+cd ${dbuild}/${mhash_pkg}
 ./configure
 make
 make install
@@ -37,7 +47,7 @@ ln -s /usr/local/lib/libmhash.so.2 /usr/lib/libmhash.so.2
 ln -s /usr/local/lib/libmhash.so.2.0.1 /usr/lib/libmhash.so.2.0.1
 ln -s /usr/local/bin/libmcrypt-config /usr/bin/libmcrypt-config
 
-cd ${build_dir}/${mcrypt_pkg}
+cd ${dbuild}/${mcrypt_pkg}
 /sbin/ldconfig
 ./configure
 make
