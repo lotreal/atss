@@ -8,5 +8,12 @@ source $bin_dir/install_php_libmhash.sh
 
 source $bin_dir/install_cmake.sh
 
+source $bin_dir/install_mysql.sh
+source $bin_dir/install_mysql_data.sh
 
-${mysql_isntall}bin/mysql_secure_installation
+source $bin_dir/install_php.sh
+source $bin_dir/install_php_ext.sh
+
+source $bin_dir/install_nginx.sh
+
+source $bin_dir/install_cookie.sh

@@ -37,7 +37,7 @@ install_mysql()
     make install
     xcheck "make install" $?
 
-    [ -L $srv_bin/mysql ] && rm $srv_bin/mysql
+    xbackup_if_exist $srv_bin/mysql
     ln -s $mysql_install $srv_bin/mysql
     xcheck "link to mysql" $?
 }

@@ -5,10 +5,14 @@
 
 xpath()
 {
-    echo $1 | sed "s/^\([^/]*\)\(.*\)$/\1/"
+    for line in $(tar tf $1); do
+        [ "${line//\//}" != $line ] && break
+    done
+    echo $line | sed "s/^\([^/]*\)\(.*\)$/\1/"
 }
 
-xpath mysql-5.5.9/
-xpath mysql-5.5.9/888
-xpath mysql-5.5.9/888/
-xpath mysql-5.5.9/888/fdsafasd?fdsa/f
+xpath archives/memcache-2.2.5.tgz
+p=$(xpath archives/PDO_MYSQL-1.0.2.tgz)
+
+echo -----------
+echo $p
