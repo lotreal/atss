@@ -3,65 +3,92 @@
 #     source ${0%/*}/config.sh
 # fi
 
+# 通用函数
+xerror()
+{
+    echo "【安装错误】[$(pwd)] $@"
+}
+
+xok()
+{
+    echo "【安装成功】[$(pwd)] $@"
+}
+
+xalert()
+{
+    echo "【安装警告】[$(pwd)] $@"
+}
+
+xecho()
+{
+    echo "【安装信息】[$(pwd)] $@"
+}
+
+xisint()
+{
+    if [[ "$1" =~ "^[0-9]+$" ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# xwarning()
 xcheck()
 {
-    cmd=$1
-    desc=$2
+    if [[ $# -eq 0 ]]; then
+        cat<<EOF
+没有指定参数！xcheck 调用：
+xcheck "编译" $?
+xcheck "make" => xcall "make" "make"
+xcheck "编译" "make"
+xcheck "编译" "make" w
+xcheck "编译" "make" w
+EOF
+        return 1
+    fi
 
-    $cmd
-    ec=$?
-    if [ "$ec" -ne 0 ]; then
-        echo "error: $desc! errorcode: $ec"
+    local desc=$1
+    declare -i exit_code
+    declare -i halt_flag
+
+    if [[ $# -eq 1 ]]; then
+        fn=$desc
+    else
+        fn=$2
+    fi
+    # 默认出错时退出；但指定了第三个参数时，出错只警告
+    if [[ $# -eq 3 ]]; then
+        halt_flag=1
+    else
+        halt_flag=0
+    fi
+
+    if xisint $fn; then
+        exit_code=$fn
+    else
+        $fn
+        exit_code=$?
+    fi
+
+    if [ "$exit_code" -ne 0 ]; then
+        xerror "$desc 失败！错误码: $ec"
+        [[ halt_flag -eq 0 ]] && exit $?
         return $?
     else
-        echo "ok: $desc ok!"
+        xok "$desc 成功。"
         return 0
     fi
 }
 
-install_san()
-{
-    xxoo()
-    {
-        ls -alh
-        pwd
-    }
-    xcheck "xxoo" "xxoo"
-    xcheck "./ls -alh" "列表"
-}
-install_san
-exit 
-xpath()
-{
-    for line in $(tar tf $1 2>/dev/null); do
-        [ "${line//\//}" != $line ] && break
-    done
-    echo "or $line"
-    echo $line | sed "s/^\([^/]*\)\(.*\)$/\1/"
-}
-
-xpath archives/memcache-2.2.5.tgz1
-p=$(xpath archives/PDO_MYSQL-1.0.2.tgz)
-
-echo -----------
-echo $p
-
-xls()
-{
-    echo $1
-    echo $#
-    shift
-    echo $1
-    echo $#
-    xxx "$@"
-    return 23
-}
-
-xxx()
-{
-    echo $#
-    ls $1 $2 $3
-}
-xls -a -h -l
-echo $?
-
+xcheck 'ls' './ls' t
+echo $halt_flag
+echo ===========
+xcheck 'ls' './ls' t
+echo $halt_flag
+echo ===========
+./ls
+xcheck 'ls' $? w
+echo ===========
+xcheck 'ls'
+echo ===========

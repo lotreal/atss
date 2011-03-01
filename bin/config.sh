@@ -108,60 +108,86 @@ xecho()
     echo "【安装信息】[$(pwd)] $@"
 }
 
-
-xwarning()
+xisint()
 {
-    $1
-    ec=$?
-    if [ "$ec" -ne 0 ]; then
-        xerror "$2 失败！错误码: $ec"
-        return $?
-    else
-        xok "$2 成功。"
+    if [[ "$1" =~ "^[0-9]+$" ]]; then
         return 0
+    else
+        return 1
     fi
 }
 
+# xwarning()
 xcheck()
 {
-    cmd=$1
-    shift
-    if [ $# -eq 0 ]; then
-        desc="$cmd"
-    else
-        desc="$*"
+    if [[ $# -eq 0 ]]; then
+        cat<<EOF
+没有指定参数！xcheck 调用：
+xcheck "编译" $?
+xcheck "make" => xcall "make" "make"
+xcheck "编译" "make"
+xcheck "编译" "make" w
+xcheck "编译" "make" w
+EOF
+        return 1
     fi
 
-    $cmd
-    ec=$?
-    if [ "$ec" -ne 0 ]; then
-        xerror "$desc 失败！错误码: $ec"
-        exit $?
+    local desc=$1
+    declare -i exit_code
+    declare -i halt_flag
+
+    if [[ $# -eq 1 ]]; then
+        fn=$desc
+    else
+        fn=$2
+    fi
+    # 默认出错时退出；但指定了第三个参数时，出错只警告
+    if [[ $# -eq 3 ]]; then
+        halt_flag=1
+    else
+        halt_flag=0
+    fi
+
+    if xisint $fn; then
+        exit_code=$fn
+    else
+        $fn
+        exit_code=$?
+    fi
+
+    if [ "$exit_code" -ne 0 ]; then
+        if [[ halt_flag -eq 0 ]]; then
+            xerror "$desc 失败！错误码: $ec"
+            exit $?
+        else
+            xalert "$desc 失败！错误码: $ec"
+            return $?
+        fi
     else
         xok "$desc 成功。"
         return 0
     fi
 }
 
-xconf()
-{
-    xcheck "./configure $@"
-}
+# xconf()
+# {
+#     xcheck "./configure $@"
+# }
 
-xmake()
-{
-    xcheck "make"
-}
+# xmake()
+# {
+#     xcheck "make"
+# }
 
-xinstall()
-{
-    xcheck "make install"
-}
+# xinstall()
+# {
+#     xcheck "make install"
+# }
 
 xbackup_if_exist()
 {
     if [ -e $1 ]; then
-        xcheck "mv $1 $1.$run_date" "$1 已存在，备份老文件到 $1.$run_date"
+        xcheck "$1 已存在，备份老文件到 $1.$run_date" "mv $1 $1.$run_date"
     fi
 }
 

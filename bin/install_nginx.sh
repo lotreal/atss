@@ -17,11 +17,10 @@ install_nginx()
     fcgi_conf=$nginx_install/conf/fcgi.conf
 
     if [ ! -d $nginx_install ]; then
-        ./configure --user=www --group=www --prefix=${nginx_install} --with-http_stub_status_module --with-http_ssl_module
-        xcheck "conf" $?
+        xcheck "./configure --user=www --group=www --prefix=${nginx_install} --with-http_stub_status_module --with-http_ssl_module"
 
-        xmake
-        xinstall
+        xcheck "make"
+        xcheck "make install"
     else
         echo "【安装警示】 $nginx_install 已存在，跳过安装 nginx"
     fi
@@ -51,8 +50,7 @@ install_nginx()
     sed -i "s#\${nginx_install}#${nginx_install}#g" $nginx_conf
 
     ulimit -SHn 65535
-    ${nginx_install}/sbin/nginx
-    xcheck "${nginx_install}/sbin/nginx 启动" $?
+    xcheck "${nginx_install}/sbin/nginx" "${nginx_install}/sbin/nginx 启动"
 }
 
 install_nginx | tee -a $install_log
