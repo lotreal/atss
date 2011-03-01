@@ -1,5 +1,5 @@
 #!/bin/bash
-run_date=`date +%Y-%m-%d-%H%M%S`
+run_date=$(date +%Y-%m-%d-%H%M%S)
 
 wd=$(dirname $(readlink -f $0))
 swd=$(cd $wd/../ && pwd)
@@ -42,7 +42,6 @@ cmake=http://www.cmake.org/files/v2.8/cmake-2.8.4.tar.gz
 # mysql=http://downloads.mysql.com/archives/mysql-5.5/mysql-5.5.8.tar.gz
 mysql=http://mirror.services.wisc.edu/mysql/Downloads/MySQL-5.5/mysql-5.5.9.tar.gz
 
-
 php=http://www.php.net/get/php-5.2.14.tar.gz/from/this/mirror
 php_fpm=http://php-fpm.org/downloads/php-5.2.14-fpm-0.5.14.diff.gz
 eaccelerator=http://bart.eaccelerator.net/source/0.9.6.1/eaccelerator-0.9.6.1.tar.bz2
@@ -51,8 +50,12 @@ pecl_memcache=http://pecl.php.net/get/memcache-2.2.5.tgz
 pecl_pdo_mysql=http://pecl.php.net/get/PDO_MYSQL-1.0.2.tgz
 pecl_imagick=http://pecl.php.net/get/imagick-2.3.0.tgz
 
+phpmyadmin_url=http://downloads.sourceforge.net/project/phpmyadmin/phpMyAdmin/3.3.9/phpMyAdmin-3.3.9-all-languages.tar.gz
 pcre=ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.10.tar.gz
 nginx=http://nginx.org/download/nginx-0.8.54.tar.gz
+
+phpmyadmin_url=http://downloads.sourceforge.net/project/phpmyadmin/phpMyAdmin/3.3.9/phpMyAdmin-3.3.9-all-languages.tar.gz
+
 
 # mysql 配置
 mysql_install=$srv_bin/mysql
@@ -70,7 +73,6 @@ mysql_bin_log=${mysql_log}/binlog
 mysql_relay_log=${mysql_log}/relaylog
 mysql_slow_log=${mysql_log}/slowlog
 
-
 # php 配置
 php_install=$srv_bin/php
 zend_cache=$srv_cache/zend
@@ -84,40 +86,82 @@ nginx_install=$srv_bin/nginx
 nginx_conf=
 fcgi_conf=
 
-# mysql_username="admin"
-# mysql_password="mVctQWXCYafn8qYQ"
-# #phpmyadmin: http://www.cqq.com:27654
-# #mysql: root:taGuneexq24KnAqm
-# #ftp: ftpcqq:xMfRStKGVV82nsxS
-# ftp_user=ftpcqq
-# ftp_passwd=xMfRStKGVV82nsxS
-
-
-# php_install=/usr/local/webserver/php
-# zend_install=/usr/local/webserver/eaccelerator_cache
-# nginx_install=/usr/local/webserver/nginx
-# main_domain="www.cqq.com *.cqq.com"
-
-
-phpmyadmin_url=http://downloads.sourceforge.net/project/phpmyadmin/phpMyAdmin/3.3.9/phpMyAdmin-3.3.9-all-languages.tar.gz
-
 
 # 通用函数
-xlog()
+xerror()
 {
-    local t=1
+    echo "【安装错误】[$(pwd)] $@"
+}
+
+xok()
+{
+    echo "【安装成功】[$(pwd)] $@"
+}
+
+xalert()
+{
+    echo "【安装警告】[$(pwd)] $@"
 }
 
 xecho()
 {
-    echo "xecho $@"
+    echo "【安装信息】[$(pwd)] $@"
+}
+
+
+xwarning()
+{
+    $1
+    ec=$?
+    if [ "$ec" -ne 0 ]; then
+        xerror "$2 失败！错误码: $ec"
+        return $?
+    else
+        xok "$2 成功。"
+        return 0
+    fi
+}
+
+xcheck()
+{
+    cmd=$1
+    shift
+    if [ $# -eq 0 ]; then
+        desc="$cmd"
+    else
+        desc="$*"
+    fi
+
+    $cmd
+    ec=$?
+    if [ "$ec" -ne 0 ]; then
+        xerror "$desc 失败！错误码: $ec"
+        exit $?
+    else
+        xok "$desc 成功。"
+        return 0
+    fi
+}
+
+xconf()
+{
+    xcheck "./configure $@"
+}
+
+xmake()
+{
+    xcheck "make"
+}
+
+xinstall()
+{
+    xcheck "make install"
 }
 
 xbackup_if_exist()
 {
     if [ -e $1 ]; then
-        mv $1 "$1.$run_date"
-        xcheck "$1 已存在，备份老文件到 $1.$run_date " $?
+        xcheck "mv $1 $1.$run_date" "$1 已存在，备份老文件到 $1.$run_date"
     fi
 }
 
@@ -139,78 +183,38 @@ xpath()
 xprepare()
 {
     local uri=$1
-    local package=$cache_dir/`xpackage $uri`
-    echo "【安装信息】准备安装 $package"
+    local package=$cache_dir/$(xpackage $uri)
+    xecho "准备安装 $package"
 
     if [ ! -e $package ]; then
-        echo "【安装错误】找不到 $package ！"
+        xerror "找不到 $package"
         exit
     fi
 
 
-    local predict=`xpath $package`
+    local predict=$(xpath $package)
     if [ "$predict" == "" ]; then
-        echo "【安装错误】不能预测 $package 的解压位置！"
+        xerror "不能预测 $package 的解压位置"
         exit
     fi
 
-    echo "【安装信息】预计解压到 $build_dir/$predict 。"
+    xecho "预计解压到 $build_dir/$predict"
     CURRENT_PACKAGE=$predict
 
     cd $build_dir
 
     if [ -d $predict ]; then
-        echo "【安装信息】文件夹 $predict 已存在，正在删除……"
+        xecho "文件夹 $predict 已存在，正在删除……"
         rm $predict -rf
     fi
 
-    echo "【安装信息】正在解压……"
-    echo "【安装信息】$package"
-    echo "【安装信息】到"
-    echo "【安装信息】$build_dir"
+    xecho "正在解压 $package"
+    xecho "到 $build_dir ……"
     tar xf $package -C ${build_dir}
 
-    cd $predict
-    echo "【安装信息】进入目录 $(pwd)"
-}
-
-xwarning()
-{
-    if [ "$2" -ne 0 ];then
-	echo "【安装警示】[$(pwd)]# $1 失败！ErrorCode:$2"
-    else
-        echo "【安装信息】[$(pwd)]# $1 成功！"
-    fi
-}
-
-xcheck()
-{
-    if [ "$2" -ne 0 ];then
-	echo "【安装错误】[$(pwd)]# $1 失败！ErrorCode:$2"
-	exit $2
-    else
-        echo "【安装信息】[$(pwd)]# $1 成功！"
-    fi
-}
-
-xconf()
-{
-    ./configure
-    xcheck "conf" $1
-}
-
-xmake()
-{
-    make
-    xcheck "make" $1
-}
-
-xinstall()
-{
-    make install
-    xcheck "make install" $1
+    xcheck "cd $predict"
 }
 
 # boot
 xbackup_if_exist $install_log
-echo "【安装信息】[$(pwd)]# 读取配置文件成功！" | tee -a $install_log
+xecho "读取配置文件成功" | tee -a $install_log

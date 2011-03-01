@@ -40,6 +40,8 @@ install_mysql()
     xbackup_if_exist $srv_bin/mysql
     ln -s $mysql_install $srv_bin/mysql
     xcheck "link to mysql" $?
+
+    ln -s $mysql_install/lib/libmysqlclient.so.16 /usr/lib/
 }
 
 install_mysql | tee -a $install_log

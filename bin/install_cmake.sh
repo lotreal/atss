@@ -6,15 +6,9 @@ fi
 install_cmake()
 {
     xprepare $cmake
-
-    ./bootstrap
-    xcheck "bootstrap" $?
-
-    make
-    xcheck "make" $?
-
-    make install
-    xcheck "make install" $?
+    xcheck "./bootstrap"
+    xcheck "make"
+    xcheck "make install"
 }
 
 install_cmake | tee -a $install_log

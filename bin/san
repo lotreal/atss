@@ -3,16 +3,65 @@
 #     source ${0%/*}/config.sh
 # fi
 
+xcheck()
+{
+    cmd=$1
+    desc=$2
+
+    $cmd
+    ec=$?
+    if [ "$ec" -ne 0 ]; then
+        echo "error: $desc! errorcode: $ec"
+        return $?
+    else
+        echo "ok: $desc ok!"
+        return 0
+    fi
+}
+
+install_san()
+{
+    xxoo()
+    {
+        ls -alh
+        pwd
+    }
+    xcheck "xxoo" "xxoo"
+    xcheck "./ls -alh" "列表"
+}
+install_san
+exit 
 xpath()
 {
-    for line in $(tar tf $1); do
+    for line in $(tar tf $1 2>/dev/null); do
         [ "${line//\//}" != $line ] && break
     done
+    echo "or $line"
     echo $line | sed "s/^\([^/]*\)\(.*\)$/\1/"
 }
 
-xpath archives/memcache-2.2.5.tgz
+xpath archives/memcache-2.2.5.tgz1
 p=$(xpath archives/PDO_MYSQL-1.0.2.tgz)
 
 echo -----------
 echo $p
+
+xls()
+{
+    echo $1
+    echo $#
+    shift
+    echo $1
+    echo $#
+    xxx "$@"
+    return 23
+}
+
+xxx()
+{
+    echo $#
+    ls $1 $2 $3
+}
+xls -a -h -l
+echo $?
+
