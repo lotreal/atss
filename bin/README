@@ -1,0 +1,9 @@
+grep -C 2 失败 log/install.log
+
+http://get.bitlbee.org/src/bitlbee-3.0.1.tar.gz
+./configure --ssl=openssl
+
+http://irssi.org/files/irssi-0.8.15.tar.gz
+
+mkdir ~/.bitlbee
+bitlbee -F -d ~/.bitlbee

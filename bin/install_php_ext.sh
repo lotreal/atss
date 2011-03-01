@@ -109,9 +109,9 @@ install_php_ext()
     xcheck "创建 $php_install/etc/php-fpm.conf" $?
 
     /usr/sbin/groupadd www
-    xwarning "groupadd www" $?
+    xcheck "groupadd www" $? w
     /usr/sbin/useradd -g www www
-    xwarning "useradd www" $?
+    xcheck "useradd www" $? w
 
     ulimit -SHn 65535
     ${php_install}/sbin/php-fpm start

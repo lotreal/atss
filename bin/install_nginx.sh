@@ -10,23 +10,20 @@ install_nginx()
     # xconf
     # xmake
     # xinstall
-
     xprepare $nginx
-    nginx_install=$srv_bin/$CURRENT_PACKAGE
-    nginx_conf=$nginx_install/conf/nginx.conf
-    fcgi_conf=$nginx_install/conf/fcgi.conf
+    nginx_version_install=$srv_bin/$CURRENT_PACKAGE
 
-    if [ ! -d $nginx_install ]; then
-        xcheck "./configure --user=www --group=www --prefix=${nginx_install} --with-http_stub_status_module --with-http_ssl_module"
+    if [ ! -d $nginx_version_install ]; then
+        xcheck "./configure --user=www --group=www --prefix=${nginx_version_install} --with-http_stub_status_module --with-http_ssl_module"
 
         xcheck "make"
         xcheck "make install"
     else
-        echo "【安装警示】 $nginx_install 已存在，跳过安装 nginx"
+        echo "【安装警示】 $nginx_version_install 已存在，跳过安装 nginx"
     fi
 
     xbackup_if_exist $srv_bin/nginx
-    ln -s $nginx_install $srv_bin/nginx
+    ln -s $nginx_version_install $srv_bin/nginx
 
     # 创建 www 和 log 目录
     mkdir -p $www

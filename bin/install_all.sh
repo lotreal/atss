@@ -1,19 +1,23 @@
 #!/bin/bash
-source ${0%/*}/config.sh
+if [ "$(basename $0)" != "install.sh" ]; then
+    echo "请通过 install.sh all 方式调用。"
+    exit 1
+fi
 
-source $bin_dir/install_mcrypt.sh
-source $bin_dir/install_php_libiconv.sh
-source $bin_dir/install_php_libmcrypt.sh
-source $bin_dir/install_php_libmhash.sh
+xecho "全部安装"
+xinstall php_libiconv
+xinstall php_libmhash
+xinstall php_libmcrypt
+xinstall mcrypt
 
-source $bin_dir/install_cmake.sh
+xinstall cmake
 
-source $bin_dir/install_mysql.sh
-source $bin_dir/install_mysql_data.sh
+# xinstall mysql
+# xinstall mysql_data
 
-source $bin_dir/install_php.sh
-source $bin_dir/install_php_ext.sh
+# xinstall php
+# xinstall php_ext
 
-source $bin_dir/install_nginx.sh
+# xinstall nginx
 
-source $bin_dir/install_cookie.sh
+# xinstall cookie

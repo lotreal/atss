@@ -1,5 +1,12 @@
 #!/bin/bash
+# if [[ $# -ne 1 ]]; then
+#     echo "用法：./install.sh target"
+#     echo "注：若安装文件是 install_xxx.sh，则 target = xxx"
+#     exit 1
+# fi
 if [[ -z $included ]]; then
+    log_enabled=True
+
     run_date=$(date +%Y-%m-%d-%H%M%S)
 
     wd=$(dirname $(readlink -f $0))
@@ -12,12 +19,17 @@ if [[ -z $included ]]; then
     log_dir=$swd/log
     build_dir=$swd/build
 
+    source $bin_dir/functions.sh
+    functions_included=$?
+
     # 安装日志
     install_log=$log_dir/install.log
+    xbackup_if_exist $install_log
 
-    source ${0%/*}/functions.sh
-    source ${0%/*}/config.sh
-    xcheck "读取配置文件成功" $?
+    xcheck "读取函数库 $bin_dir/functions.sh" $functions_included | xlog
+
+    source $bin_dir/config.sh
+    xcheck "读取配置文件 $bin_dir/config.sh" $? | xlog
 
     [ ! -d $build_dir ] && mkdir -p $build_dir
     [ ! -d $log_dir ] && mkdir -p $log_dir
@@ -30,7 +42,4 @@ if [[ -z $included ]]; then
 
     included=True
 fi
-[[ -n $1 ]] && file=$1 || file=all
-file=$bin_dir/install_$file.sh
-source $file
-xcheck "$file 运行" $?
+xinstall $1
