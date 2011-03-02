@@ -5,12 +5,16 @@ if [ "$(basename $0)" != "install.sh" ]; then
 fi
 
 xecho "全部安装"
-xinstall php_libiconv
-xinstall php_libmhash
-xinstall php_libmcrypt
-xinstall mcrypt
+xinstall bitlbee $2
 
-xinstall cmake
+# xinstall php_libiconv
+
+
+# xinstall php_libmhash
+# xinstall php_libmcrypt
+# xinstall mcrypt
+
+# xinstall cmake
 
 # xinstall mysql
 # xinstall mysql_data

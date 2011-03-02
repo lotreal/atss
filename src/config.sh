@@ -1,5 +1,7 @@
 #!/bin/bash
 # 安装包地址
+bitlbee=http://get.bitlbee.org/src/bitlbee-3.0.1.tar.gz
+
 php_libiconv=http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.13.1.tar.gz
 php_libmhash="http://downloads.sourceforge.net/mhash/mhash-0.9.9.9.tar.gz?modtime=1175740843&big_mirror=0"
 php_libmcrypt="http://downloads.sourceforge.net/mcrypt/libmcrypt-2.5.8.tar.gz?modtime=1171868460&big_mirror=0"
@@ -31,6 +33,7 @@ sys_conf=/webserver/etc
 srv_log=/webserver/log
 srv_cache=/webserver/cache
 srv_data=/data
+srv_script=/webserver/script
 
 # mysql 配置
 mysql_install=$srv_bin/mysql

@@ -2,7 +2,7 @@
 [[ -n $1 ]] && host=$1 || host=9
 [[ -n $2 ]] && copy_mode=all || copy_mode=
 
-host_dir=/home/lot/autosrv
+host_dir=/root/autosrv
 wd=$(dirname $(readlink -f $0))
 swd=$(cd $wd/../ && pwd)
 

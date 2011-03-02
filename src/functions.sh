@@ -9,10 +9,15 @@ xlog()
     # [[ $BASH_SUBSHELL -gt 1 ]] && return 0
     # [[ -z $log_enabled ]] && return 0
     if [[ $BASH_SUBSHELL -gt 1 || -z $log_enabled ]]; then
-        tee
+        tee -i
         return 0
     fi
     tee -a $install_log
+}
+
+xnotify()
+{
+    $swd/tools/bitlbee_send.py "$@"
 }
 
 xerror()
@@ -100,7 +105,11 @@ EOF
 xbackup_if_exist()
 {
     if [ -e $1 ]; then
-        xcheck "$1 已存在，备份老文件到 $1.$run_date" "mv $1 $1.$run_date"
+        if [[ -z $2 ]]; then
+            xcheck "$1 已存在，备份老文件到 $1.$run_date" "mv $1 $1.$run_date"
+        else
+            mv $1 $1.$run_date # 指定了$2, 则为安静模式
+        fi
     fi
 }
 
@@ -139,28 +148,26 @@ xpath()
 
 xconf()
 {
-    if [[ $# -ne 3 ]]; then
-        xerror "xconf 需要三个参数，现在指定了 $# 个。"
-        return 1
-    fi
     local srv_name=$1
     local conf_file=$2
     local srv_conf=$3
 
-    local conf_tpl
-    [[ -d $local_settings ]] && conf_tpl=$local_settings || conf_tpl=$settings
+    local tpl_conf_file=$local_settings/$srv_name/$conf_file
+    if [[ ! -e $tpl_conf_file ]]; then
+        tpl_conf_file=$settings/$srv_name/$conf_file
+    fi
 
-    local tpl_conf_file=$conf_tpl/$srv_name/$conf_file
+
     local sys_conf_file=$sys_conf/$srv_name/$conf_file
-    local srv_conf_file=$srv_conf/$conf_file
-
-    xbackup_if_exist $sys_conf_file
-    xbackup_if_exist $srv_conf_file
-
+    xbackup_if_exist $sys_conf_file -q
     mkdir -p $sys_conf/$srv_name
-
     cp $tpl_conf_file $sys_conf_file
-    ln -s $sys_conf_file $srv_conf_file
+
+    if [[ ! -z $srv_conf ]]; then
+        local srv_conf_file=$srv_conf/$conf_file
+        xbackup_if_exist $srv_conf_file -q
+        ln -s $sys_conf_file $srv_conf
+    fi
 
     echo $sys_conf_file
 }
@@ -202,15 +209,30 @@ xprepare()
 
 xinstall()
 {
-    [[ -n $1 ]] && file=$1 || file=all
-    file=$bin_dir/install_$file.sh
-    
-    if [[ -e $file ]]; then
-        source $file | xlog
-        xecho "完成运行 $file"
-        # xcheck "运行 $file" $?
-    else
-        xerror "文件 $file 不存在"
-        exit 2
+    local target
+    local install_file
+    local config_file
+    local config_only
+
+    [[ -n $1 ]] && target=$1 || target=all
+    [[ -n $2 ]] && config_only=True || config_only=
+
+    install_file=$bin_dir/install_$target.sh
+    config_file=$bin_dir/config_$target.sh
+
+    if [[ -z $config_only ]]; then
+        if [[ -e $install_file ]]; then
+            source $install_file | xlog
+            xecho "完成运行 $install_file"
+        # xcheck "运行 $install_file" $?
+        else
+            xerror "文件 $install_file 不存在"
+            exit 2
+        fi
+    fi
+
+    if [[ -e $config_file ]]; then
+        source $config_file | xlog
+        xecho "完成运行 $config_file"
     fi
 }
