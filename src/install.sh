@@ -12,12 +12,23 @@ if [[ -z $included ]]; then
     wd=$(dirname $(readlink -f $0))
     swd=$(cd $wd/../ && pwd)
 
-    bin_dir=$swd/bin
+    bin_dir=$swd/src
     cache_dir=$swd/archives
-    tpl_dir=$swd/templates
+
+    settings=$swd/settings
 
     log_dir=$swd/log
     build_dir=$swd/build
+
+    # 创建所需目录
+    [ ! -d $build_dir ] && mkdir -p $build_dir
+    [ ! -d $log_dir ] && mkdir -p $log_dir
+
+    [ ! -d $srv_bin ] && mkdir -p $srv_bin
+    [ ! -d $sys_conf ] && mkdir -p $sys_conf
+    [ ! -d $srv_log ] && mkdir -p $srv_log
+    [ ! -d $srv_cache ] && mkdir -p $srv_cache
+    [ ! -d $srv_data ] && mkdir -p $srv_data
 
     source $bin_dir/functions.sh
     functions_included=$?
@@ -30,15 +41,6 @@ if [[ -z $included ]]; then
 
     source $bin_dir/config.sh
     xcheck "读取配置文件 $bin_dir/config.sh" $? | xlog
-
-    [ ! -d $build_dir ] && mkdir -p $build_dir
-    [ ! -d $log_dir ] && mkdir -p $log_dir
-
-    [ ! -d $srv_bin ] && mkdir -p $srv_bin
-    [ ! -d $srv_etc ] && mkdir -p $srv_etc
-    [ ! -d $srv_log ] && mkdir -p $srv_log
-    [ ! -d $srv_cache ] && mkdir -p $srv_cache
-    [ ! -d $srv_data ] && mkdir -p $srv_data
 
     included=True
 fi

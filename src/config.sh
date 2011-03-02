@@ -22,9 +22,12 @@ nginx=http://nginx.org/download/nginx-0.8.54.tar.gz
 
 phpmyadmin_url=http://downloads.sourceforge.net/project/phpmyadmin/phpMyAdmin/3.3.9/phpMyAdmin-3.3.9-all-languages.tar.gz
 
+# 本地设置路径
+local_settings=$swd/local_settings/hj
+
 # 服务器路径配置
 srv_bin=/webserver/bin
-srv_etc=/webserver/etc
+sys_conf=/webserver/etc
 srv_log=/webserver/log
 srv_cache=/webserver/cache
 srv_data=/data
@@ -32,7 +35,6 @@ srv_data=/data
 # mysql 配置
 mysql_install=$srv_bin/mysql
 mysql_server=/etc/init.d/mysql.server
-mysql_conf=$srv_etc/mysql/
 
 mysql_port=3306
 mysql_sock=/tmp/mysqld.sock
@@ -54,7 +56,5 @@ php_fpm_err_log=$srv_log/php/php-fpm.log
 
 # nginx 配置
 nginx_install=$srv_bin/nginx
-nginx_conf=$nginx_install/conf/nginx.conf
-fcgi_conf=$nginx_install/conf/fcgi.conf
 nginx_log=$srv_log/nginx
 www=$src_data/www

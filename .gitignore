@@ -1,3 +1,5 @@
 archives
-log
 build
+log
+local_settings
+

@@ -34,14 +34,8 @@ install_nginx()
     chmod +w $nginx_log
     chown -R www:www $nginx_log
 
-    mkdir -p $srv_etc/nginx
-    cp $tpl_dir/nginx/nginx.conf $srv_etc/nginx
-    cp $tpl_dir/nginx/fcgi.conf $srv_etc/nginx
-
-    xbackup_if_exist $nginx_conf
-    xbackup_if_exist $fcgi_conf
-    ln -s $srv_etc/nginx/nginx.conf $nginx_conf
-    ln -s $srv_etc/nginx/fcgi.conf $fcgi_conf
+    nginx_conf=$(xconf nginx nginx.conf $nginx_install/conf)
+    fcgi_conf=$(xconf nginx fcgi.conf $nginx_install/conf)
 
     sed -i "s#\${nginx_log}#${nginx_log}#g" $nginx_conf
     sed -i "s#\${nginx_install}#${nginx_install}#g" $nginx_conf

@@ -85,16 +85,13 @@ install_php_ext()
     mkdir -p $zend_cache
     mkdir -p $srv_log/php
 
-    # ${php_install}/etc/php.ini
-    # ${php_install}/etc/php-fpm.conf
-    php_conf=$srv_etc/php/php.ini
-    php_fpm_conf=$srv_etc/php/php-fpm.conf
-    mkdir -p $srv_etc/php
-    xbackup_if_exist $php_conf
-    xbackup_if_exist $php_fpm_conf
-
-    cp $tpl_dir/php/php.ini $php_conf
-    cp $tpl_dir/php/php-fpm.conf $php_fpm_conf
+    php_conf=$(xconf php php.ini $php_install/etc)
+    xcheck "创建 $php_install/etc/php.ini" $?
+    php_fpm_conf=$(xconf php php-fpm.conf $php_install/etc)
+    xcheck "创建 $php_install/etc/php-fpm.conf" $?
+ 
+    cp $conf_tpl/php/php.ini $php_conf
+    cp $conf_tpl/php/php-fpm.conf $php_fpm_conf
 
     sed -i "s#\${php_ext_dir}#${php_ext_dir}#g" $php_conf
     sed -i "s#\${zend_cache}#${zend_cache}#g" $php_conf
@@ -102,11 +99,6 @@ install_php_ext()
     sed -i "s#\${php_fpm_pid}#${php_fpm_pid}#g" $php_fpm_conf
     sed -i "s#\${php_fpm_err_log}#${php_fpm_err_log}#g" $php_fpm_conf
 
-    ln -sf $php_conf $php_install/etc
-    xcheck "创建 $php_install/etc/php.ini" $?
-
-    ln -sf $php_fpm_conf $php_install/etc
-    xcheck "创建 $php_install/etc/php-fpm.conf" $?
 
     /usr/sbin/groupadd www
     xcheck "groupadd www" $? w

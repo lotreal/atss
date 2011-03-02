@@ -119,6 +119,52 @@ xpath()
     echo $line | sed "s/^\([^/]*\)\(.*\)$/\1/"
 }
 
+# 用法：
+# xconf $srv_name $conf_file $srv_conf
+# xconf mysql my.cnf $mysql_data
+# 配置文件处理流程：
+# srv_name : 服务名
+# conf_file: 配置文件名
+# srv_conf : nginx, php 等服务特定配置文件目录
+
+# conf_tpl : 模板配置文件目录
+# sys_conf : 服务器配置文件目录
+
+# 取得 $conf_tpl (是用户定义的 local_settings 还是默认的 settings 目录)
+# xbackup_if_exist $sys_conf/$conf_file
+# cp $conf_tpl/$conf_file $sys_conf/$conf_file
+# ()处理变量，修改 $sys_conf/$conf_file
+# xbackup_if_exist $srv_conf/$conf_file
+# ln -s $sys_conf/$conf_file $srv_conf/$conf_file
+
+xconf()
+{
+    if [[ $# -ne 3 ]]; then
+        xerror "xconf 需要三个参数，现在指定了 $# 个。"
+        return 1
+    fi
+    local srv_name=$1
+    local conf_file=$2
+    local srv_conf=$3
+
+    local conf_tpl
+    [[ -d $local_settings ]] && conf_tpl=$local_settings || conf_tpl=$settings
+
+    local tpl_conf_file=$conf_tpl/$srv_name/$conf_file
+    local sys_conf_file=$sys_conf/$srv_name/$conf_file
+    local srv_conf_file=$srv_conf/$conf_file
+
+    xbackup_if_exist $sys_conf_file
+    xbackup_if_exist $srv_conf_file
+
+    mkdir -p $sys_conf/$srv_name
+
+    cp $tpl_conf_file $sys_conf_file
+    ln -s $sys_conf_file $srv_conf_file
+
+    echo $sys_conf_file
+}
+
 xprepare()
 {
     local uri=$1
