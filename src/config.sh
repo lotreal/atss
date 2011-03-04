@@ -59,6 +59,7 @@ php_install=$sys_install/php
 zend_cache=$sys_cache/zend
 php_fpm_pid=$sys_log/php/php-fpm.pid
 php_fpm_err_log=$sys_log/php/php-fpm.log
+php_log=$sys_log/php
 
 # nginx 配置
 nginx_install=$sys_install/nginx

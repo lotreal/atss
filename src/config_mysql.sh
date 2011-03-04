@@ -30,6 +30,7 @@ if [ ! -d $mysql_data/mysql ]; then
     sed -i "s#\${mysql_slow_log}#${mysql_slow_log}#g" $mysql_conf
 
     cp ${mysql_install}/support-files/mysql.server $mysql_server
+    xbin $mysql_server
     xcheck "创建启动脚本 $mysql_server" $?
 
     $mysql_server start
@@ -43,6 +44,3 @@ if [ ! -d $mysql_data/mysql ]; then
 else
     echo "【安装警示】目录 $mysql_data/mysql 已存在，跳过初始化数据表，以避免丢失数据！"
 fi
-
-$swd/tools/bitlbee_send.py "完成运行 install_mysql_data.sh。"
-xnotify "mysql 配置成功。"

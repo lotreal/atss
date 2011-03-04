@@ -33,4 +33,3 @@ xautobackup $mysql_install
 xcheck "ln -s $mysql_verion_install $mysql_install"
 
 xcheck "ln -s $mysql_install/lib/libmysqlclient.so.16 /usr/lib/"
-xnotify "mysql 安装成功。"

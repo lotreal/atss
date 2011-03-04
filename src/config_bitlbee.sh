@@ -13,5 +13,3 @@ sed -i "s@\${bitlbee_conf}@${bitlbee_conf}@g" $bitlbee_daemon
 
 chmod +x $bitlbee_daemon
 source $bitlbee_daemon
-
-xnotify "Hi~ bitlbee 已经设置成功！XD"

@@ -13,5 +13,3 @@ xcheck "./configure"
 xcheck "make"
 xcheck "make install"
 xcheck "link_php_libmhash"
-
-xnotify "php_libmhash 安装成功。"

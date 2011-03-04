@@ -34,14 +34,13 @@ if [[ -z $included ]]; then
     source $bin_dir/config.sh
     xcheck "读取配置文件 $bin_dir/config.sh" $? | xlog
 
-    [ ! -d $build_dir ] && mkdir -p $build_dir
 
-    [ ! -d $sys_install ] && mkdir -p $sys_install
-    [ ! -d $sys_conf ] && mkdir -p $sys_conf
-    [ ! -d $sys_log ] && mkdir -p $sys_log
-    [ ! -d $sys_cache ] && mkdir -p $sys_cache
-    [ ! -d $sys_data ] && mkdir -p $sys_data
-    [ ! -d $sys_path ] && mkdir -p $sys_path
+    # [ ! -d $sys_install ] && mkdir -p $sys_install
+    # [ ! -d $sys_conf ] && mkdir -p $sys_conf
+    # [ ! -d $sys_log ] && mkdir -p $sys_log
+    # [ ! -d $sys_cache ] && mkdir -p $sys_cache
+    # [ ! -d $sys_data ] && mkdir -p $sys_data
+    # [ ! -d $sys_path ] && mkdir -p $sys_path
 
     included=True
 fi

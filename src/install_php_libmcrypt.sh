@@ -19,5 +19,3 @@ xcheck "./configure --enable-ltdl-install"
 xcheck "make"
 xcheck "make install"
 xcheck "link_php_libmcrypt"
-
-xnotify "php_libmcrypt 安装成功。"

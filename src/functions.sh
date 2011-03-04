@@ -17,6 +17,8 @@ xlog()
 
 xnotify()
 {
+    # -e $bitlbee_daemon
+    # ps | grep bitlbee
     $swd/tools/bitlbee_send.py "$@"
 }
 
@@ -164,12 +166,15 @@ xconf()
     local conf_file=$2
 
     local filename=$(basename $conf_file)
+    local conf_dir=$(dirname $conf_file)
 
     # local_settings 不存在该配置文件，就用 settings 目录里的
     local tpl_conf_file=$local_settings/$srv_name/$filename
     if [[ ! -e $tpl_conf_file ]]; then
         tpl_conf_file=$settings/$srv_name/$filename
     fi
+
+    mkdir -p $conf_dir
 
     xautobackup $conf_file
     cp $tpl_conf_file $conf_file
@@ -203,6 +208,7 @@ xprepare()
     xecho "预计解压到 $build_dir/$predict"
     CURRENT_PACKAGE=$predict
 
+    [ ! -d $build_dir ] && mkdir -p $build_dir
     cd $build_dir
 
     if [ -d $predict ]; then
@@ -236,6 +242,7 @@ xinstall()
             local install_ec=${PIPESTATUS[0]}
             [[ $install_ec -ne 0 ]] && xnotify "运行 $install_file 失败！"
             xcheck "运行 $install_file" $install_ec
+            xnotify "运行 $install_file 成功！"
         else
             xerror "文件 $install_file 不存在"
             exit 2
@@ -247,6 +254,7 @@ xinstall()
         local config_ec=${PIPESTATUS[0]}
         [[ $config_ec -ne 0 ]] && xnotify "运行 $config_file 失败！"
         xcheck "运行 $config_file" $config_ec
+        xnotify "运行 $config_file 成功！"
     fi
 }
 
@@ -254,4 +262,10 @@ xmkpasswd()
 {
     openssl rand -base64 8
     # cat /dev/urandom|tr -dc "a-zA-Z0-9-_\$\?"|fold -w 9|head
+}
+
+xbin()
+{
+    [ ! -d $sys_path ] && mkdir -p $sys_path
+    ln -sf $php_install/sbin/php-fpm $sys_path
 }

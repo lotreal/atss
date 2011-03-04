@@ -45,5 +45,3 @@ if [[ -z $included ]]; then
 
     included=True
 fi
-xcheck 'catcat' 'catcat'
-xcheck 'ls'
