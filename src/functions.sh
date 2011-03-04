@@ -90,11 +90,11 @@ EOF
 
     if [ "$exit_code" -ne 0 ]; then
         if [[ halt_flag -eq 0 ]]; then
-            xerror "$desc 失败！错误码: $ec"
-            exit $?
+            xerror "$desc 失败！错误码: $exit_code"
+            exit $exit_code
         else
-            xalert "$desc 失败！错误码: $ec"
-            return $?
+            xalert "$desc 失败！错误码: $exit_code"
+            return $exit_code
         fi
     else
         xok "$desc 成功。"
@@ -102,14 +102,26 @@ EOF
     fi
 }
 
-xbackup_if_exist()
+# 得到指定文件的备份路径，例如
+# xbackup_name /etc/my.cnf => /backup/my.cnf.2012-12-12.
+# xbackup_name()
+# {
+#     local file=$(readlink -f $1)
+#     echo "$sys_backup/${file//\//!}.$(date +%Y-%m-%d_%H%M%S)"
+
+#     # local file="${$(readlink -f $1)/\/!}.$(date +%Y-%m-%d_%H%M%S)"
+#     # echo $sys_backup/$file
+# }
+
+xautobackup()
 {
-    if [ -e $1 ]; then
-        if [[ -z $2 ]]; then
-            xcheck "$1 已存在，备份老文件到 $1.$run_date" "mv $1 $1.$run_date"
-        else
-            mv $1 $1.$run_date # 指定了$2, 则为安静模式
-        fi
+    if [[ -e $1 && -s $1 ]]; then
+        [[ -z "$auto_backup" ]] && auto_backup=$(dirname $1)
+        [[ ! -d $auto_backup ]] && mkdir -p $auto_backup
+        local file=$(readlink -f $1)
+        backup="$auto_backup/${file//\//!}.$(date +%Y-%m-%d_%H%M%S)"
+        xcheck "$1 已存在，备份老文件到 $backup" $?
+        mv $1 $backup
     fi
 }
 
@@ -140,36 +152,34 @@ xpath()
 # sys_conf : 服务器配置文件目录
 
 # 取得 $conf_tpl (是用户定义的 local_settings 还是默认的 settings 目录)
-# xbackup_if_exist $sys_conf/$conf_file
+# xautobackup $sys_conf/$conf_file
 # cp $conf_tpl/$conf_file $sys_conf/$conf_file
 # ()处理变量，修改 $sys_conf/$conf_file
-# xbackup_if_exist $srv_conf/$conf_file
+# xautobackup $srv_conf/$conf_file
 # ln -s $sys_conf/$conf_file $srv_conf/$conf_file
 
 xconf()
 {
     local srv_name=$1
     local conf_file=$2
-    local srv_conf=$3
 
-    local tpl_conf_file=$local_settings/$srv_name/$conf_file
+    local filename=$(basename $conf_file)
+
+    # local_settings 不存在该配置文件，就用 settings 目录里的
+    local tpl_conf_file=$local_settings/$srv_name/$filename
     if [[ ! -e $tpl_conf_file ]]; then
-        tpl_conf_file=$settings/$srv_name/$conf_file
+        tpl_conf_file=$settings/$srv_name/$filename
     fi
 
+    xautobackup $conf_file
+    cp $tpl_conf_file $conf_file
 
-    local sys_conf_file=$sys_conf/$srv_name/$conf_file
-    xbackup_if_exist $sys_conf_file -q
-    mkdir -p $sys_conf/$srv_name
-    cp $tpl_conf_file $sys_conf_file
+    local sys_conf_dir=$sys_conf/$srv_name
+    mkdir -p $sys_conf_dir
 
-    if [[ ! -z $srv_conf ]]; then
-        local srv_conf_file=$srv_conf/$conf_file
-        xbackup_if_exist $srv_conf_file -q
-        ln -s $sys_conf_file $srv_conf
-    fi
-
-    echo $sys_conf_file
+    xautobackup $sys_conf_dir/$filename
+    ln -s $conf_file $sys_conf_dir/
+    # echo $conf_file
 }
 
 xprepare()
@@ -223,8 +233,9 @@ xinstall()
     if [[ -z $config_only ]]; then
         if [[ -e $install_file ]]; then
             source $install_file | xlog
-            xecho "完成运行 $install_file"
-        # xcheck "运行 $install_file" $?
+            local install_ec=${PIPESTATUS[0]}
+            [[ $install_ec -ne 0 ]] && xnotify "运行 $install_file 失败！"
+            xcheck "运行 $install_file" $install_ec
         else
             xerror "文件 $install_file 不存在"
             exit 2
@@ -233,6 +244,14 @@ xinstall()
 
     if [[ -e $config_file ]]; then
         source $config_file | xlog
-        xecho "完成运行 $config_file"
+        local config_ec=${PIPESTATUS[0]}
+        [[ $config_ec -ne 0 ]] && xnotify "运行 $config_file 失败！"
+        xcheck "运行 $config_file" $config_ec
     fi
+}
+
+xmkpasswd()
+{
+    openssl rand -base64 8
+    # cat /dev/urandom|tr -dc "a-zA-Z0-9-_\$\?"|fold -w 9|head
 }

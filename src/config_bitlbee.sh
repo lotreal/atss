@@ -1,8 +1,11 @@
 #!/bin/bash
 killall bitlbee
 
-bitlbee_account_conf=$(xconf bitlbee lot.xml)
-bitlbee_daemon=$(xconf bitlbee bitlbee.d $srv_script)
+bitlbee_account_conf=~/.bitlbee/lot.xml
+xconf bitlbee $bitlbee_account_conf
+
+bitlbee_daemon=$sys_path/bitlbee.d
+xconf bitlbee $bitlbee_daemon
 
 bitlbee_conf=$(dirname "$bitlbee_account_conf")
 

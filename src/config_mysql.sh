@@ -15,7 +15,8 @@ if [ ! -d $mysql_data/mysql ]; then
         --user=mysql
     xcheck "以 mysql 用户身份建立数据表" $?
 
-    mysql_conf=$(xconf mysql my.cnf $mysql_data)
+    mysql_conf=$mysql_data/my.cnf
+    xconf mysql $mysql_conf
     xcheck "创建 $mysql_data/my.cnf" $?
 
     sed -i "s#\${mysql_port}#${mysql_port}#g" $mysql_conf
@@ -34,8 +35,9 @@ if [ ! -d $mysql_data/mysql ]; then
     $mysql_server start
     xcheck "启动 $mysql_server" $?
 
+    xnotify "【安装暂停】现在将进行 mysql 设置，请输入密码继续……"
     echo "设置 root 密码："
-    echo "随机密码：$(mkpasswd) $(mkpasswd) $(mkpasswd) $(mkpasswd) $(mkpasswd)"
+    echo "随机密码：$(xmkpasswd) $(xmkpasswd) $(xmkpasswd) $(xmkpasswd) $(xmkpasswd)"
     cd $mysql_install && bin/mysql_secure_installation
     xcheck "mysql_secure_installation" $?
 else
@@ -43,3 +45,4 @@ else
 fi
 
 $swd/tools/bitlbee_send.py "完成运行 install_mysql_data.sh。"
+xnotify "mysql 配置成功。"

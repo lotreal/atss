@@ -28,36 +28,39 @@ phpmyadmin_url=http://downloads.sourceforge.net/project/phpmyadmin/phpMyAdmin/3.
 local_settings=$swd/local_settings/hj
 
 # 服务器路径配置
-srv_bin=/webserver/bin
+sys_path=/webserver/bin
+sys_install=/webserver/local
 sys_conf=/webserver/etc
-srv_log=/webserver/log
-srv_cache=/webserver/cache
-srv_data=/data
-srv_script=/webserver/script
+sys_log=/webserver/log
+sys_cache=/webserver/cache
+
+sys_data=/data
+sys_backup=$sys_data/.backup
+auto_backup=$sys_backup/autosave
 
 # mysql 配置
-mysql_install=$srv_bin/mysql
+mysql_install=$sys_install/mysql
 mysql_server=/etc/init.d/mysql.server
 
 mysql_port=3306
 mysql_sock=/tmp/mysqld.sock
 
-mysql_data=$srv_data/mysql/${mysql_port}/data
+mysql_data=$sys_data/mysql/${mysql_port}/data
 mysql_pid=$mysql_data/mysql.pid
 
-mysql_log=$srv_log/mysql/${mysql_port}
+mysql_log=$sys_log/mysql/${mysql_port}
 mysql_error_log=${mysql_log}/mysql_error.log
 mysql_bin_log=${mysql_log}/binlog
 mysql_relay_log=${mysql_log}/relaylog
 mysql_slow_log=${mysql_log}/slowlog
 
 # php 配置
-php_install=$srv_bin/php
-zend_cache=$srv_cache/zend
-php_fpm_pid=$srv_log/php/php-fpm.pid
-php_fpm_err_log=$srv_log/php/php-fpm.log
+php_install=$sys_install/php
+zend_cache=$sys_cache/zend
+php_fpm_pid=$sys_log/php/php-fpm.pid
+php_fpm_err_log=$sys_log/php/php-fpm.log
 
 # nginx 配置
-nginx_install=$srv_bin/nginx
-nginx_log=$srv_log/nginx
+nginx_install=$sys_install/nginx
+nginx_log=$sys_log/nginx
 www=$src_data/www

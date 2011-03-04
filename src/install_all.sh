@@ -1,26 +1,23 @@
 #!/bin/bash
-if [ "$(basename $0)" != "install.sh" ]; then
-    echo "请通过 install.sh all 方式调用。"
-    exit 1
-fi
+installer=install.sh
 
-xecho "全部安装"
-xinstall bitlbee $2
+source $installer test $1
+echo "【错误码】$?【错误码】---------------------------------------"
+source $installer test1 $1
+echo "【错误码】$?【错误码】---------------------------------------"
 
-# xinstall php_libiconv
+# source $installer bitlbee $1
+# source $installer php_libiconv $1
+# source $installer php_libmhash $1
+# source $installer php_libmcrypt $1
 
+# source $installer mcrypt $1
+# source $installer cmake $1
+# source $installer mysql $1
 
-# xinstall php_libmhash
-# xinstall php_libmcrypt
-# xinstall mcrypt
+# source $installer php $1
 
-# xinstall cmake
-
-# xinstall mysql
-# xinstall mysql_data
-
-# xinstall php
-# xinstall php_ext
+# source $installer nginx $1
 
 # xinstall nginx
 

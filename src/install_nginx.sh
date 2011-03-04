@@ -11,7 +11,7 @@ install_nginx()
     # xmake
     # xinstall
     xprepare $nginx
-    nginx_version_install=$srv_bin/$CURRENT_PACKAGE
+    nginx_version_install=$sys_install/$CURRENT_PACKAGE
 
     if [ ! -d $nginx_version_install ]; then
         xcheck "./configure --user=www --group=www --prefix=${nginx_version_install} --with-http_stub_status_module --with-http_ssl_module"
@@ -22,8 +22,8 @@ install_nginx()
         echo "【安装警示】 $nginx_version_install 已存在，跳过安装 nginx"
     fi
 
-    xbackup_if_exist $srv_bin/nginx
-    ln -s $nginx_version_install $srv_bin/nginx
+    xautobackup $sys_install/nginx
+    ln -s $nginx_version_install $sys_install/nginx
 
     # 创建 www 和 log 目录
     mkdir -p $www
@@ -34,8 +34,9 @@ install_nginx()
     chmod +w $nginx_log
     chown -R www:www $nginx_log
 
-    nginx_conf=$(xconf nginx nginx.conf $nginx_install/conf)
-    fcgi_conf=$(xconf nginx fcgi.conf $nginx_install/conf)
+    nginx_conf=$nginx_install/conf/nginx.conf
+    xconf nginx $nginx_conf
+    xconf nginx $nginx_install/conf/fcgi.conf
 
     sed -i "s#\${nginx_log}#${nginx_log}#g" $nginx_conf
     sed -i "s#\${nginx_install}#${nginx_install}#g" $nginx_conf

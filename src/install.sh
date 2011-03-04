@@ -27,7 +27,7 @@ if [[ -z $included ]]; then
 
     # 安装日志
     install_log=$log_dir/install.log
-    xbackup_if_exist $install_log
+    xautobackup $install_log
 
     xcheck "读取函数库 $bin_dir/functions.sh" $functions_included | xlog
 
@@ -35,12 +35,13 @@ if [[ -z $included ]]; then
     xcheck "读取配置文件 $bin_dir/config.sh" $? | xlog
 
     [ ! -d $build_dir ] && mkdir -p $build_dir
-    [ ! -d $srv_bin ] && mkdir -p $srv_bin
+
+    [ ! -d $sys_install ] && mkdir -p $sys_install
     [ ! -d $sys_conf ] && mkdir -p $sys_conf
-    [ ! -d $srv_log ] && mkdir -p $srv_log
-    [ ! -d $srv_cache ] && mkdir -p $srv_cache
-    [ ! -d $srv_data ] && mkdir -p $srv_data
-    [ ! -d $srv_script ] && mkdir -p $srv_script
+    [ ! -d $sys_log ] && mkdir -p $sys_log
+    [ ! -d $sys_cache ] && mkdir -p $sys_cache
+    [ ! -d $sys_data ] && mkdir -p $sys_data
+    [ ! -d $sys_path ] && mkdir -p $sys_path
 
     included=True
 fi

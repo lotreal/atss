@@ -1,30 +1,130 @@
 #!/bin/bash
-if [ "$(basename $0)" != "install_all.sh" ]; then
-    source ${0%/*}/config.sh
-fi
-
 apply_php_fpm()
 {
     gzip -cd $cache_dir/$(xpackage $php_fpm) | patch -d . -p1
 }
 
-install_php()
-{
-    xprepare $php
+xprepare $php
 
-    mysql_install=$srv_bin/mysql
-    php_install=$srv_bin/$CURRENT_PACKAGE
+php_version_install=$sys_install/$CURRENT_PACKAGE
 
-    xcheck "apply_php_fpm" "应用 php_fpm 补丁"
+xcheck "应用 php_fpm 补丁" "apply_php_fpm"
 
-    xcheck "./configure --prefix=${php_install} --with-config-file-path=${php_install}/etc --with-mysql=${mysql_install} --with-mysqli=${mysql_install}/bin/mysql_config --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-discard-path --enable-safe-mode --enable-bcmath --enable-shmop --enable-sysvsem --enable-inline-optimization --with-curl --with-curlwrappers --enable-mbregex --enable-fastcgi --enable-fpm --enable-force-cgi-redirect --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-openssl --with-mhash --enable-pcntl --enable-sockets --with-ldap --with-ldap-sasl --with-xmlrpc --enable-zip --enable-soap"
+./configure \
+    --prefix=${php_version_install} \
+    --with-config-file-path=${php_version_install}/etc \
+    --with-mysql=${mysql_install} \
+    --with-mysqli=${mysql_install}/bin/mysql_config \
+    --with-iconv-dir=/usr/local \
+    --with-freetype-dir \
+    --with-jpeg-dir \
+    --with-png-dir \
+    --with-zlib \
+    --with-libxml-dir=/usr \
+    --enable-xml \
+    --disable-rpath \
+    --enable-discard-path \
+    --enable-safe-mode \
+    --enable-bcmath \
+    --enable-shmop \
+    --enable-sysvsem \
+    --enable-inline-optimization \
+    --with-curl \
+    --with-curlwrappers \
+    --enable-mbregex \
+    --enable-fastcgi \
+    --enable-fpm \
+    --enable-force-cgi-redirect \
+    --enable-mbstring \
+    --with-mcrypt \
+    --with-gd \
+    --enable-gd-native-ttf \
+    --with-openssl \
+    --with-mhash \
+    --enable-pcntl \
+    --enable-sockets \
+    --with-ldap \
+    --with-ldap-sasl \
+    --with-xmlrpc \
+    --enable-zip \
+    --enable-soap
+xcheck "./configure" $?
 
-    xcheck "make ZEND_EXTRA_LIBS='-liconv'"
-    xcheck "make install"
+xcheck "make ZEND_EXTRA_LIBS='-liconv'"
+xcheck "make install"
 
-    xbackup_if_exist $srv_bin/php
-    xcheck "ln -s $php_install $srv_bin/php"
-    # cp ${dbuild}/${php_pkg}/php.ini-dist ${php_install}/etc/php.ini
-}
+xautobackup $php_install
+xcheck "ln -s $php_version_install $php_install"
 
-install_php | tee -a $install_log
+# 安装 pecl_memcache
+xprepare $pecl_memcache
+
+${php_install}/bin/phpize
+xcheck "phpize" $?
+
+./configure --with-php-config=${php_install}/bin/php-config
+xcheck "conf" $?
+
+make
+xcheck "make" $?
+
+make install
+xcheck "make install" $?
+
+
+# 安装 eaccelerator
+xprepare $eaccelerator
+
+${php_install}/bin/phpize
+xcheck "phpize" $?
+
+./configure --enable-eaccelerator=shared --with-php-config=${php_install}/bin/php-config
+xcheck "conf" $?
+
+make
+xcheck "make" $?
+
+make install
+xcheck "make install" $?
+
+# 安装 pecl_pdo_mysql
+xprepare $pecl_pdo_mysql
+
+${php_install}/bin/phpize
+xcheck "phpize" $?
+
+./configure --with-php-config=${php_install}/bin/php-config --with-pdo-mysql=${mysql_install}
+xcheck "conf" $?
+
+make
+xcheck "make" $?
+
+make install
+xcheck "make install" $?
+
+# 安装 imagemagick
+xprepare $imagemagick
+
+./configure
+xcheck "conf" $?
+
+make
+xcheck "make" $?
+
+make install
+xcheck "make install" $?
+
+# 安装 pecl_imagick_pkg
+xprepare $pecl_imagick
+
+${php_install}/bin/phpize
+xcheck "phpize" $?
+
+./configure --with-php-config=${php_install}/bin/php-config
+xcheck "conf" $?
+
+make
+xcheck "make" $?
+
+make install
+xcheck "make install" $?

@@ -1,4 +1,7 @@
 #!/bin/bash
-source $0 test1
-source $0 test1
-source $0 test1
+xcheck "echo hello"
+echo "【错误码】$?【错误码】============="
+xcheck "lin1_catcat" 'catcat' w
+echo "【错误码】$?【错误码】============="
+xcheck "lin2_catcat"
+echo "【错误码】$?【错误码】============="

@@ -1,7 +1,7 @@
 #!/bin/bash
 xprepare $mysql
 
-mysql_verion_install=$srv_bin/$CURRENT_PACKAGE
+mysql_verion_install=$sys_install/$CURRENT_PACKAGE
 
 /usr/sbin/groupadd mysql
 xcheck "groupadd mysql" $? w
@@ -29,7 +29,8 @@ xcheck "make"
 xcheck "make install"
 
 # 创建 mysql 链接
-xbackup_if_exist $mysql_install
+xautobackup $mysql_install
 xcheck "ln -s $mysql_verion_install $mysql_install"
 
 xcheck "ln -s $mysql_install/lib/libmysqlclient.so.16 /usr/lib/"
+xnotify "mysql 安装成功。"
