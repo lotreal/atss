@@ -7,3 +7,10 @@ http://irssi.org/files/irssi-0.8.15.tar.gz
 
 mkdir ~/.bitlbee
 bitlbee -F -d ~/.bitlbee
+
+access-logs  etc  mail  public_ftp  public_html  src  ssl  tmp  workspace  www
+
+#TODO 生成账号文件
+http://123.183.208.230/ 装好了
+mysql> root:xxx
+ftp> 6693.cc:xxx

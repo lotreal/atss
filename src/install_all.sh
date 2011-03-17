@@ -1,23 +1,28 @@
 #!/bin/bash
-installer=install.sh
-# source $installer test $1
-# echo "【错误码】$?【错误码】---------------------------------------"
-# source $installer test1 $1
-# echo "【错误码】$?【错误码】---------------------------------------"
-# source 0.0.yum
-# source $installer bitlbee $1
-source $installer php_libiconv $1
-source $installer php_libmhash $1
-source $installer php_libmcrypt $1
+source h.sh
+xinstall bitlbee
+xinstall php_libiconv
+xinstall php_libmhash
+xinstall php_libmcrypt
 
-source $installer mcrypt $1
-source $installer cmake $1
-source $installer mysql $1
+xinstall mcrypt
+xinstall cmake
+# config make mysql install pause for waiting password
+xinstall mysql --dont-config
 
-# source $installer php $1
+xinstall php --dont-config
+xinstall eaccelerator
+xinstall imagemagick
+xinstall pecl_imagick
+xinstall pecl_memcache
+xinstall pecl_pdo_mysql
+xinstall php --config-only
 
-# source $installer nginx $1
+xinstall nginx
+xinstall phpmyadmin
 
-# xinstall nginx
+xinstall vsftpd
 
-# xinstall cookie
+xinstall final
+
+xinstall mysql --config-only

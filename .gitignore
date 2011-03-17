@@ -1,5 +1,4 @@
-archives
-build
-log
-local_settings
-
+archives/
+build/
+log/
+src/usr/
