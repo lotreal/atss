@@ -20,17 +20,20 @@ yum -y install \
 
 ntpdate us.pool.ntp.org
 
-/sbin/ldconfig
-cd /tmp
-[[ -e "git-latest.tar.gz" ]] || wget "http://www.codemonkey.org.uk/projects/git-snapshots/git/git-latest.tar.gz"
+which git
+if [ $? -ne 0 ]; then
+    /sbin/ldconfig
+    cd /tmp
+    [[ -e "git-latest.tar.gz" ]] || wget "http://www.codemonkey.org.uk/projects/git-snapshots/git/git-latest.tar.gz"
 
-package=git-latest.tar.gz
-predict=$(xpath $package)
-tar xzvf $package
-cd $predict
-autoconf
-./configure --with-curl=/usr/local
-make
-make install
+    package=git-latest.tar.gz
+    predict=$(xpath $package)
+    tar xzvf $package
+    cd $predict
+    autoconf
+    ./configure --with-curl=/usr/local
+    make
+    make install
 
 # .gitconfig
+fi
