@@ -83,6 +83,7 @@ EOF
 #         移动 vsftpd 到 $autosave_dir/!etc!pam.d!vsftpd.20110309_113504
 #       else :
 #         移动 vsftpd 到 /etc/pam.d/!etc!pam.d!vsftpd.20110309_113504
+# 依赖：$autosave_dir
 xautosave()
 {
     : ${1:?"target file/folder is required"}
@@ -115,14 +116,15 @@ xpath()
 # 用法：xgetconf nginx 或 xgetconf nginx/fastcig.conf
 # 功能：在 config.sh 中指定的配置文件夹下找 配置文件，如果没找到，
 #       就到 install.sh 中指定的默认配置文件夹下面找。
+# 依赖：$user_profile $default_profile
 xgetconf() {
     : ${1:?"configuration file/folder is required"}
     declare config=$1
-    if [[ -e $USR_ETC/$config ]]; then
-	echo $USR_ETC/$config
+    if [[ -e $user_profile/$config ]]; then
+	echo $user_profile/$config
     else
-	if [[ -e $ETC/$config ]]; then
-	    echo $ETC/$config
+	if [[ -e $default_profile/$config ]]; then
+	    echo $default_profile/$config
 	else
 	    return 1
 	fi
@@ -159,6 +161,7 @@ xconf()
 }
 
 #TODO 如果没有则下载
+# 依赖 $cache_dir
 xprepare()
 {
     local uri=$1
@@ -200,8 +203,8 @@ xinstall()
     : ${1:?"xinstall: missing install target"}
 
     local target=$1
-    local install_file=$SCRIPT_DIR/module/install_$target.sh
-    local config_file=$SCRIPT_DIR/module/config_$target.sh
+    local install_file=$script_dir/module/install_$target.sh
+    local config_file=$script_dir/module/config_$target.sh
 
     if [[ "$2" != "--config-only" ]]; then
         if [[ -e $install_file ]]; then

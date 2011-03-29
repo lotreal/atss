@@ -1,1 +1,0 @@
-/home/lot/workspace/autosrv/src/etc/config.sh
