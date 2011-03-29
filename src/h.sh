@@ -20,7 +20,7 @@ if [[ $_included != "t" ]]; then
     while getopts ":C:" Option
     do
         case $Option in
-            C     ) user_profile=$script_dir/profile/$OPTARG;;
+            C     ) user_profile=$script_dir/profile/$OPTARG; echo "use profile $user_profile";;
             *     ) echo "Unimplemented option chosen.";;   # 默认情况的处理
         esac
     done
