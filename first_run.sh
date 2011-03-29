@@ -1,5 +1,4 @@
 #!/bin/bash
-# 预测解压路径
 xpath() {
     for line in $(tar tf $1); do
         [ "${line//\//}" != $line ] && break
@@ -21,7 +20,6 @@ yum -y install \
 
 ntpdate us.pool.ntp.org
 
-# 安装 git
 /sbin/ldconfig
 cd /tmp
 [[ -e "git-latest.tar.gz" ]] || wget "http://www.codemonkey.org.uk/projects/git-snapshots/git/git-latest.tar.gz"
