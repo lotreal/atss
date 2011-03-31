@@ -22,6 +22,7 @@ ntpdate us.pool.ntp.org
 
 which git
 if [ $? -ne 0 ]; then
+    grep /usr/local/lib /etc/ld.so.conf || echo /usr/local/lib >> /etc/ld.so.conf
     /sbin/ldconfig
     cd /tmp
     [[ -e "git-latest.tar.gz" ]] || wget "http://www.codemonkey.org.uk/projects/git-snapshots/git/git-latest.tar.gz"
