@@ -7,8 +7,8 @@ xinstall php_libmcrypt
 
 xinstall mcrypt
 xinstall cmake
-# config make mysql install pause for waiting password
-xinstall mysql --dont-config
+
+xinstall mysql
 
 xinstall php --dont-config
 xinstall eaccelerator
@@ -24,5 +24,3 @@ xinstall phpmyadmin
 xinstall vsftpd
 
 xinstall final
-
-xinstall mysql --config-only
