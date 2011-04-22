@@ -1,6 +1,7 @@
 #!/bin/bash
-# 配置 php 和 php-fpm 
+# 配置 php 和 php-fpm
 php_ext_dir=$($php_install/bin/php-config --extension-dir 2>/dev/null)
+mkdir -p $php_ext_dir
 
 /usr/sbin/groupadd www-data
 xcheck "groupadd www-data" $? w
