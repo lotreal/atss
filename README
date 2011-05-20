@@ -14,3 +14,5 @@ access-logs  etc  mail  public_ftp  public_html  src  ssl  tmp  workspace  www
 http://123.183.208.230/ 装好了
 mysql> root:xxx
 ftp> 6693.cc:xxx
+
+scp ~/.gitconfig ty68:/root/

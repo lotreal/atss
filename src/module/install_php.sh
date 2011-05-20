@@ -1,10 +1,6 @@
 #!/bin/bash
 apply_php_fpm()
 {
-    if [ ! -e $php_fpm ]; then
-	wget $php_fpm -P $cache_dir
-    fi
-
     gzip -cd $cache_dir/$(xpackage $php_fpm) | patch -d . -p1
 }
 
