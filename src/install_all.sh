@@ -1,5 +1,6 @@
 #!/bin/bash
-source h.sh
+. h.sh
+
 xinstall bitlbee
 xinstall php_libiconv
 xinstall php_libmhash
@@ -23,4 +24,7 @@ xinstall phpmyadmin
 
 xinstall vsftpd
 
-xinstall final
+. tuning/network.sh
+. tuning/tuning.sh
+. tuning/mysql.sh
+. tuning/rclocal.sh
