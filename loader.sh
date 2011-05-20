@@ -6,6 +6,11 @@ xpath() {
     echo $line | sed "s/^\([^/]*\)\(.*\)$/\1/"
 }
 
+###### 1. upgrade system use yum
+###### 2. install dependence lib use yum
+###### 3. sync date
+###### 4. install git
+
 yum -y upgrade
 
 yum -y install \
@@ -18,7 +23,7 @@ yum -y install \
     e2fsprogs e2fsprogs-devel \
     ntp screen
 
-ntpdate us.pool.ntp.org
+/usr/sbin/ntpdate ntp.api.bz
 
 which git
 if [ $? -ne 0 ]; then
