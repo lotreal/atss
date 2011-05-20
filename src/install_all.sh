@@ -23,11 +23,13 @@ download_all() {
     "$nginx" \
     "$phpmyadmin"
   do
-    if [ -s $cache_dir/$i ]; then
-      echo "$i [found]"
+    local package=$cache_dir/$(xpackage $i)
+    if [ -s $package ]; then
+      echo "$package [found]"
     else
-      echo "Error: $i not found!!!download now......"
-      echo wget $i -P $cache_dir/
+      echo "Error: $package not found!!!download now......"
+      wget $i -P $cache_dir/
+      xcheck "下载 $package" $?
     fi
   done
 }
