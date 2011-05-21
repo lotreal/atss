@@ -22,7 +22,8 @@ ln -s $vsftpd_conf/vsftpd /etc/pam.d/
 xbin $vsftpd_conf/vsftpd_update_passwd.sh
 $vsftpd_conf/vsftpd_update_passwd.sh
 
-service vsftpd restart
+# TODO fix vsftpd start cant find /etv/vsftpd/vsftpd.conf
+# service vsftpd restart
 
 # 参考 http://www.hao32.com/webserver/279.html
 # ftp服务器连接失败,错误提示:
@@ -31,5 +32,5 @@ service vsftpd restart
 
 # 解决方法:
 # 在终端输入命令：
-# setsebool ftpd_disable_trans 1 
+# setsebool ftpd_disable_trans 1
 # service vsftpd restart

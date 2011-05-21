@@ -9,6 +9,7 @@ xcheck "groupadd www-data" $? w
 xcheck "useradd www-data" $? w
 
 # 复制 ZendOptimizer.so
+# TODO fix x64 zend
 xprepare $zend_optimizer
 xcheck "cp data/5_2_x_comp/ZendOptimizer.so $php_ext_dir"
 chcon -t httpd_sys_content_t $php_ext_dir/ZendOptimizer.so

@@ -30,11 +30,14 @@ download_all() {
       echo "Error: $package not found!!!download now......"
       wget $i -P $cache_dir/
       xcheck "下载 $package" $?
-      local predict=$(xpath $package)
-      if [ "$predict" == "" ]; then
-        rm $package -f
-        xlog err "不能预测 $package 的解压位置"
-        exit
+      # todo: check diff.gz
+      if [ "$i" != "$php_fpm" ]; then
+        local predict=$(xpath $package)
+        if [ "$predict" == "" ]; then
+          rm $package -f
+          xlog err "不能预测 $package 的解压位置"
+          exit
+        fi
       fi
     fi
   done
