@@ -41,6 +41,7 @@ download_all() {
 }
 download_all
 
+xinstall profile
 xinstall bitlbee
 xinstall php_libiconv
 xinstall php_libmhash

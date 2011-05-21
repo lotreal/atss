@@ -98,7 +98,7 @@ netinfo ()
 spin ()
 {
     echo -ne "${RED}-"
-    echo -ne "${WHITE}\b|"    
+    echo -ne "${WHITE}\b|"
     echo -ne "${BLUE}\bx"
     sleep .02
     echo -ne "${RED}\b+${NC}"
@@ -120,6 +120,7 @@ echo -ne "${LIGHTBLUE}Uptime for this computer is ";uptime | awk /'up/ {print $3
 # export XMODIFIERS=@im=ibus
 # export QT_IM_MODULE=ibus
 # export CDPATH=/data/www
+export SSH_ASKPASS=
 printf "%50s\n"|tr ' ' -
 # set PATH so it includes user's private bin if it exists
 if [ -d "/webserver/bin" ] ; then

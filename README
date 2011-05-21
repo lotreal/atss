@@ -16,3 +16,6 @@ mysql> root:xxx
 ftp> 6693.cc:xxx
 
 scp ~/.gitconfig ty68:/root/
+
+${php_install}/sbin/php-fpm start
+SSH_ASKPASS=

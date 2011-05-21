@@ -43,3 +43,6 @@ if [ $? -ne 0 ]; then
 
 # .gitconfig
 fi
+
+cd ~
+git clone git@github.com:lotreal/autosrv.git
