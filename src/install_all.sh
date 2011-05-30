@@ -1,47 +1,6 @@
 #!/bin/bash
 . h.sh
 
-download_all() {
-  for i in \
-    "$bitlbee" \
-    "$php_libiconv" \
-    "$php_libmhash" \
-    "$php_libmcrypt" \
-    "$mcrypt" \
-    "$cmake" \
-    "$mysql" \
-    "$php" \
-    "$php_fpm" \
-    "$php5_3" \
-    "$eaccelerator" \
-    "$imagemagick" \
-    "$pecl_memcache" \
-    "$pecl_pdo_mysql" \
-    "$pecl_imagick" \
-    "$zend_optimizer" \
-    "$pcre" \
-    "$nginx" \
-    "$phpmyadmin"
-  do
-    local package=$cache_dir/$(xpackage $i)
-    if [ -s $package ]; then
-      echo "$package [found]"
-    else
-      echo "Error: $package not found!!!download now......"
-      wget $i -P $cache_dir/
-      xcheck "下载 $package" $?
-      # todo: check diff.gz
-      if [ "$i" != "$php_fpm" ]; then
-        local predict=$(xpath $package)
-        if [ "$predict" == "" ]; then
-          rm $package -f
-          xlog err "不能预测 $package 的解压位置"
-          exit
-        fi
-      fi
-    fi
-  done
-}
 download_all
 
 xinstall profile

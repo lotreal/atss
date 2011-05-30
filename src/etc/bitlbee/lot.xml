@@ -1,6 +1,6 @@
-<user nick="xxx" password="xx" version="1">
+<user nick="lot" password="vM1YLKDq8s8q8awysUM3vEgHHxTq" version="1">
 	<setting name="last_version">196609</setting>
-	<account protocol="jabber" handle="xx@gmail.com" password="xx" autoconnect="1" tag="gtalk" server="talk.google.com">
+	<account protocol="jabber" handle="oldluo@gmail.com" password="Hw757NwzpxEoyxxBJFxHJVYT" autoconnect="1" tag="gtalk" server="talk.google.com">
 		<setting name="port">5223</setting>
 		<setting name="ssl">true</setting>
 	</account>

@@ -17,6 +17,7 @@ if [[ $_included != "t" ]]; then
   default_profile=$script_dir/etc
   source $default_profile/config.ini
 
+  source $script_dir/color.sh
   source $script_dir/functions.sh
 
   xlog debug "##############################################################################"

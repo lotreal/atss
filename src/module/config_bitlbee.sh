@@ -4,8 +4,8 @@ killall bitlbee
 bitlbee_home=$HOME/.bitlbee
 bitlbee_daemon=$sys_path/bitlbee.server
 
-xconf bitlbee $bitlbee_home/lot.xml
-xconf bitlbee $bitlbee_daemon "bitlbee_home"
-chmod +x $bitlbee_daemon
+xconf $bitlbee_home bitlbee/lot.xml
+xconf $sys_path bitlbee/bitlbee.server "bitlbee_home"
 
+chmod +x $bitlbee_daemon
 source $bitlbee_daemon

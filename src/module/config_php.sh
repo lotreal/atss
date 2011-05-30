@@ -22,11 +22,12 @@ chown -R www-data:www-data $zend_cache
 mkdir -p $php_log
 
 php_conf=$php_install/etc/php.ini
-xconf php $php_conf "php_ext_dir zend_cache"
+xconf $php_install/etc php/php.ini "php_ext_dir zend_cache"
 xcheck "创建 $php_install/etc/php.ini" $?
 
 php_fpm_conf=$php_install/etc/php-fpm.conf
-xconf php $php_fpm_conf "php_fpm_pid php_fpm_err_log"
+php_fpm_pid=$php_install/logs/php-fpm.pid
+xconf $php_install/etc php/php-fpm.conf "php_fpm_pid php_fpm_err_log"
 xcheck "创建 $php_install/etc/php-fpm.conf" $?
 
 

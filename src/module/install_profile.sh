@@ -1,4 +1,4 @@
 #!/bin/bash
-xconf screen $HOME/.screenrc
-xconf bash   $HOME/.bashrc
-xconf git   $HOME/.gitconfig
+xconf $HOME screen/.screenrc
+xconf $HOME bash/.bashrc
+xconf $HOME git/.gitconfig
