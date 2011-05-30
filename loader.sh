@@ -44,5 +44,6 @@ if [ $? -ne 0 ]; then
 # .gitconfig
 fi
 
-cd ~
-git clone git@github.com:lotreal/autosrv.git
+ssh-keygen -t rsa -C "lotreal@gmail.com"
+cat ~/.ssh/id_rsa.pub
+echo git clone git@github.com:lotreal/autosrv.git
