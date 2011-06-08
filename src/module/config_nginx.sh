@@ -13,6 +13,7 @@ ln -s $sys_conf/nginx/nginx.conf $nginx_install/conf/
 xbin ${nginx_install}/sbin/nginx
 
 #TODO 多域名日志分割
+xuse $bin nginx/nginx_log_cutter.sh
 # xbin $sys_conf/nginx/nginx_log_cutter.sh
 # grep nginx_log_cutter.sh /etc/crontab || \
 #     echo "00 00 * * * /bin/bash /webserver/bin/nginx_log_cutter.sh" >> /etc/crontab

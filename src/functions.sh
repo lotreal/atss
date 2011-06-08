@@ -173,6 +173,40 @@ xgetconf() {
     fi
 }
 
+xsetup()
+{
+    : ${sys_conf:?"declare sys_conf first!"}
+
+    : ${1:?"config base folder is required"}
+    : ${2:?"config file is required"}
+
+    xlog debug "xconf $@"
+    declare config_dir=$1
+
+    declare config_file=$2
+
+    declare replace=$3
+
+    declare template=$(xgetconf $config_file)
+    if [[ -z $template ]]; then
+        xlog debug "xconf: can't find configuration file!"
+        return 1
+    fi
+
+    declare config_hub=$sys_conf/$(dirname $config_file)
+
+    xautosave $config_hub/$(basename $config_file)
+    xautosave $config_dir/$(basename $config_file)
+
+    mkdir -p $config_hub
+    mkdir -p $config_dir
+
+    echo xcp $template $config_hub "$replace"
+    xcp $template $config_hub/$(basename $config_file) "$replace"
+    ln -s $config_hub/$(basename $config_file) $config_dir/
+}
+
+
 # xconf $nginx_install nginx/conf/fcgi.conf
 xconf()
 {

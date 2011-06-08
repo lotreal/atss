@@ -19,3 +19,11 @@ scp ~/.gitconfig ty68:/root/
 
 ${php_install}/sbin/php-fpm start
 SSH_ASKPASS=
+
+* tmp
+* 
+
+emacs
+./configure --without-x
+make
+make install
