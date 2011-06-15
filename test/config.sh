@@ -122,14 +122,54 @@ xsubstitute_interactive() {
 
 xlistvars() {
     : ${1:?"($(caller 0)) file is required"}
-    # grep '^[a-zA-Z0-9_]*=.*$' $1 |cut -d'=' -f1
-    l=$(grep '^[a-zA-Z0-9_]*=.*$' $1 |cut -d'=' -f1)
-    echo ${l/'\n'/ }
-    # for line in $l; do
-    #     echo $line
-    # done
+    grep '^[a-zA-Z0-9_]*=.*$' $1 |cut -d'=' -f1
 }
 
+
+getvars() {
+    : ${1:?"($(caller 0)) file is required"}
+    {
+        while read line ; do
+            while [[ "$line" =~ \$\{([a-zA-Z_][a-zA-Z_0-9]*)\} ]] ; do
+                LHS=${BASH_REMATCH[1]}
+                echo $LHS
+                line=${line//$LHS/}
+            done
+        done < $1
+    } | sort | uniq
+}
+
+sa_subtract() {
+    local a=$1
+    local b=$2
+    pattern=$(echo $b | sed "s/ / \\\|/g")
+    xecho ---
+    echo pattern
+    echo $pattern
+    echo $a
+    echo $b
+    echo $a | sed "s/\($pattern\)//g"
+    xecho ---
+}
+xlistvars meta/mysql.ini
+xecho ---
+a=$(getvars my.cnf)
+b=$(xlistvars meta/mysql.ini)
+#diff $a $b
+xecho ---
+echo $a
+echo $b
+xecho ---
+echo subtract a b
+sa_subtract "$a" "$b"
+echo subtract b a
+sa_subtract "$b" "$a"
+xecho ---
+for var in $b; do
+    xecho $var
+done
+
+exit
 # rm etc-bak -rf
 # cp etc etc-bak -r
 
