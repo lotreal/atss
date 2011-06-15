@@ -55,3 +55,5 @@ xcheck "make install"
 
 xautosave $php_install
 xcheck "ln -s $php_version_install $php_install"
+
+cp php.ini-recommended $php_install

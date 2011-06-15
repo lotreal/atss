@@ -174,18 +174,12 @@ EOF
 
 generate_php_ini_tpl
 
-source meta/global.ini
+rm etc -rf
+cp sets/zy etc -r
 
-rm $sys_conf -rf
-cp sets/zy $sys_conf -r
+xsubstitute meta/mysql.ini etc/mysql/my.cnf
+xsubstitute meta/php.ini etc/php/php.ini
 
-xsubstitute meta/mysql.ini $sys_conf/mysql/my.cnf
-xsubstitute meta/php.ini $sys_conf/php/php.ini
-xsubstitute meta/php.ini $sys_conf/php/php-fpm.conf
-xsubstitute meta/nginx.ini $sys_conf/nginx/nginx.conf
-
-ln -s $sys_conf/mysql/my.cnf $mysql_data/
-ln -s $sys_conf/php/php.ini $php_install/etc/
-ln -s $sys_conf/nginx/nginx.conf $nginx_install/conf/
-ln -s $sys_conf/nginx/fcgi.conf $nginx_install/conf/
+less etc/mysql/my.cnf
+less etc/php/php.ini
 echo

@@ -27,3 +27,5 @@ emacs
 ./configure --without-x
 make
 make install
+
+grep \${.*} . -r -o | sort | uniq > vars
