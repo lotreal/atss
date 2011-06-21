@@ -1,7 +1,8 @@
 #!/bin/bash
-# 配置 php 和 php-fpm
-php_ext_dir=$($php_install/bin/php-config --extension-dir 2>/dev/null)
+source $src/meta/php.ini
+
 mkdir -p $php_ext_dir
+mkdir -p $php_log
 
 /usr/sbin/groupadd www-data
 xcheck "groupadd www-data" $? w
@@ -9,17 +10,39 @@ xcheck "groupadd www-data" $? w
 xcheck "useradd www-data" $? w
 
 
-mkdir -p $php_log
+PHP_INI=$sys_conf/php/php.ini
+cp $php_install/etc/php.ini-recommended $PHP_INI
 
-php_conf=$php_install/etc/php.ini
-xconf $php_install/etc php/php.ini "php_ext_dir zend_cache"
-xcheck "创建 $php_install/etc/php.ini" $?
+sed -i 's#extension_dir = "./"#extension_dir = "${php_ext_dir}"\nextension = "memcache.so"\nextension = "pdo_mysql.so"\nextension = "imagick.so"\nextension = "ftp.so"\n#' $PHP_INI
+sed -i 's#output_buffering = Off#output_buffering = On#' $PHP_INI
+sed -i "s#; always_populate_raw_post_data = On#always_populate_raw_post_data = On#g" $PHP_INI
+sed -i "s#; cgi.fix_pathinfo=0#cgi.fix_pathinfo=0#g" $PHP_INI
 
-php_fpm_conf=$php_install/etc/php-fpm.conf
-php_fpm_pid=$php_install/logs/php-fpm.pid
-xconf $php_install/etc php/php-fpm.conf "php_fpm_pid php_fpm_err_log"
-xcheck "创建 $php_install/etc/php-fpm.conf" $?
+cat <<EOF >> $PHP_INI
+[eaccelerator]
+zend_extension="\${php_ext_dir}/eaccelerator.so"
+eaccelerator.shm_size="64"
+eaccelerator.cache_dir="\${zend_cache}"
+eaccelerator.enable="1"
+eaccelerator.optimizer="1"
+eaccelerator.check_mtime="1"
+eaccelerator.debug="0"
+eaccelerator.filter=""
+eaccelerator.shm_max="0"
+eaccelerator.shm_ttl="3600"
+eaccelerator.shm_prune_period="3600"
+eaccelerator.shm_only="0"
+eaccelerator.compress="1"
+eaccelerator.compress_level="9"
 
+[Zend Optimizer]
+zend_optimizer.optimization_level=1
+zend_optimizer.encoder_loader=0
+zend_extension="\${php_ext_dir}/ZendOptimizer.so"
+EOF
+
+xsubstitute $src/meta/php.ini $sys_conf/php/php.ini
+xsubstitute $src/meta/php.ini $sys_conf/php/php-fpm.conf
 
 xbin $php_install/bin/php
 xbin $php_install/sbin/php-fpm

@@ -1,4 +1,195 @@
 #!/bin/bash
+xecho() {
+    local s=$@
+    local len=${#s}
+    local width=80
+    local pre
+    local post
+
+    if [ "$s" == "---" ]; then
+        printf "+%${width}s+\n"|tr ' ' -
+        return
+    fi
+
+    if [ "${1:0:1}" == "=" ]; then
+        pre=$((($width-$len)/2))
+        post=$(($width-$len-$pre))
+        printf "|%${pre}s$s%${post}s|\n"
+        return
+    fi
+
+    post=$(($width-$len-1))
+    printf "| $s%${post}s|\n"
+}
+
+
+xprint_vars_table() {
+    local pattern=$1
+    local vars=$(getvars $2)
+
+    xecho ---
+    xecho === Substitute Variable List ===
+    xecho ---
+    for var in $pattern; do
+        xecho \${$var} =\> $(eval echo \$$var)
+    done
+    xecho ---
+    xecho === INI Only ===
+    xecho ---
+    for var in $(sa_subtract "$pattern" "$vars"); do
+        xecho \${$var} =\> $(eval echo \$$var)
+    done
+    xecho ---
+    xecho === Template Only ===
+    xecho ---
+    for var in $(sa_subtract "$vars" "$pattern"); do
+        xecho \${$var} =\> $(eval echo \$$var)
+    done
+    xecho ---
+}
+
+# 说明： 替换文件中的变量，变量需为 ${mysql_port} 格式
+# _substitute $file $replace_vars
+# 例如： _substitute my.cnf "mysql_port mysql_socket"
+_substitute() {
+    : ${1:?"pattern is required"}
+    : ${2:?"file is required"}
+
+    local pattern=$1
+    local file=$2
+
+    for var in $pattern; do
+        # xecho "sed -i s#\${$var}#$(eval echo \$$var)#g $file"
+        sed -i "s#\${$var}#$(eval echo \$$var)#g" $file
+    done
+}
+
+_substitute_() {
+    : ${1:?"pattern is required"}
+    : ${2:?"file is required"}
+
+    pp=${1//' '/\|}
+    while read line ; do
+        while [[ "$line" =~ '(\$\{('$pp')\})' ]] ; do
+            LHS=${BASH_REMATCH[1]}
+            RHS="$(eval echo "\"$LHS\"")"
+            line=${line//$LHS/$RHS}
+        done
+        echo $line
+    done < $2
+}
+
+
+xsubstitute() {
+    : ${1:?"pattern is required"}
+    : ${2:?"file is required"}
+
+    local pattern=$1
+    local file=$2
+
+    if [ -e "$pattern" ]; then
+        source $pattern
+        pattern=$(xlistvars $pattern)
+    fi
+
+    xprint_vars_table "$pattern" "$file"
+
+    xsubstitute_interactive "$pattern" "$file"
+
+    if [ -d "$file" ]; then
+        for f in $( find $file -type f ); do
+            _substitute "$pattern" "$f"
+        done
+    else
+        _substitute "$pattern" "$file"
+    fi
+
+
+    xecho ---
+    xecho = [OK] =
+    xecho ---
+}
+
+xsubstitute_interactive() {
+    local pattern=$1
+    local file=$2
+
+    echo
+    read -p "(C): Continue; (Q): Quit; (R): Reload; (D): Detail. (Default: C): " CONTINUE
+
+    case "$CONTINUE" in
+        ""|C|c)
+            return 0
+            ;;
+        D|d)
+            re=$\{\\\(${pattern// /\\\|}\\\)}
+            echo $re
+            grep -n -r --color=auto $re $file
+            ;;
+        Q|q)
+            exit
+            ;;
+        *|R|r)
+            ;;
+    esac
+    xsubstitute_interactive "$pattern" "$file"
+}
+
+xlistvars() {
+    : ${1:?"($(caller 0)) file is required"}
+    # grep '^[a-zA-Z0-9_]*=.*$' $1 |cut -d'=' -f1
+    l=$(grep '^[a-zA-Z0-9_]*=.*$' $1 |cut -d'=' -f1)
+    echo ${l/'\n'/ }
+    # for line in $l; do
+    #     echo $line
+    # done
+}
+
+# my.cnf.tpl => mysql_install mysql_port ...
+getvars() {
+    : ${1:?"($(caller 0)) file is required"}
+    {
+        while read line ; do
+            while [[ "$line" =~ '\$\{([a-zA-Z_][a-zA-Z_0-9]*)\}' ]] ; do
+                LHS=${BASH_REMATCH[1]}
+                echo $LHS
+                line=${line//$LHS/}
+            done
+        done < $1
+    } | sort | uniq
+}
+
+# a='aaa bbb ccc ddd'
+# b='bbb ddd'
+# sa_subtract $a $b => 'aaa ccc'
+sa_subtract() {
+    local a=$1
+    local b=$2
+    for aa in $a; do
+        local f=0
+        for bb in $b; do
+            if [[ "$aa" == "$bb" ]]; then
+                f=1
+                continue
+            fi
+        done
+        [[ "$f" == '0' ]] && echo $aa
+    done
+    return 0
+    # pattern=$(echo $b | sed "s/ / \\\|/g")
+    # xecho ---
+    # echo $a | sed "s/\($pattern\)//g"
+    # xecho ---
+}
+
+# ==============================================================
+# ==============================================================
+# ==============================================================
+# ==============================================================
+# ==============================================================
+# ==============================================================
+# ==============================================================
+
 # 全局变量，用于函数返回
 CURRENT_PACKAGE=
 
@@ -343,7 +534,7 @@ xinstall()
 
 xmkpasswd()
 {
-    openssl rand -base64 8
+    openssl rand -base64 18
   # cat /dev/urandom|tr -dc "a-zA-Z0-9-_\$\?"|fold -w 9|head
 }
 

@@ -29,3 +29,5 @@ make
 make install
 
 grep \${.*} . -r -o | sort | uniq > vars
+
+wget http://mirror.bjtu.edu.cn/gnu/bash/bash-4.2.tar.gz

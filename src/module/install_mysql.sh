@@ -26,10 +26,10 @@ cmake . \
 xcheck "cmake" $?
 
 xcheck "make"
-xcheck "make install"
+# xcheck "make install"
 
-# 创建 mysql 链接
-xautosave $mysql_install
-xcheck "ln -s $mysql_verion_install $mysql_install"
+# # 创建 mysql 链接
+# xautosave $mysql_install
+# xcheck "ln -s $mysql_verion_install $mysql_install"
 
-xcheck "ln -s $mysql_install/lib/libmysqlclient.so* /usr/lib/"
+# xcheck "ln -s $mysql_install/lib/libmysqlclient.so* /usr/lib/"

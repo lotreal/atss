@@ -19,6 +19,7 @@ xcheck "应用 php_fpm 补丁" "apply_php_fpm"
     --with-freetype-dir \
     --with-jpeg-dir \
     --with-png-dir \
+    --with-ftp \
     --with-zlib \
     --with-libxml-dir=/usr \
     --enable-xml \
@@ -56,4 +57,4 @@ xcheck "make install"
 xautosave $php_install
 xcheck "ln -s $php_version_install $php_install"
 
-cp php.ini-recommended $php_install
+cp php.ini-recommended $php_install/etc

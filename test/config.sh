@@ -125,12 +125,12 @@ xlistvars() {
     grep '^[a-zA-Z0-9_]*=.*$' $1 |cut -d'=' -f1
 }
 
-
+# my.cnf.tpl => mysql_install mysql_port ...
 getvars() {
     : ${1:?"($(caller 0)) file is required"}
     {
         while read line ; do
-            while [[ "$line" =~ \$\{([a-zA-Z_][a-zA-Z_0-9]*)\} ]] ; do
+            while [[ "$line" =~ '\$\{([a-zA-Z_][a-zA-Z_0-9]*)\}' ]] ; do
                 LHS=${BASH_REMATCH[1]}
                 echo $LHS
                 line=${line//$LHS/}
@@ -139,29 +139,39 @@ getvars() {
     } | sort | uniq
 }
 
+# a='aaa bbb ccc ddd'
+# b='bbb ddd'
+# sa_subtract $a $b => 'aaa ccc'
 sa_subtract() {
     local a=$1
     local b=$2
-    pattern=$(echo $b | sed "s/ / \\\|/g")
-    xecho ---
-    echo pattern
-    echo $pattern
-    echo $a
-    echo $b
-    echo $a | sed "s/\($pattern\)//g"
-    xecho ---
+    for aa in $a; do
+        local f=0
+        for bb in $b; do
+            if [[ "$aa" == "$bb" ]]; then
+                f=1
+                continue
+            fi
+        done
+        [[ "$f" == '0' ]] && echo $aa
+    done
+    return 0
+    # pattern=$(echo $b | sed "s/ / \\\|/g")
+    # xecho ---
+    # echo $a | sed "s/\($pattern\)//g"
+    # xecho ---
 }
-xlistvars meta/mysql.ini
+
 xecho ---
 a=$(getvars my.cnf)
 b=$(xlistvars meta/mysql.ini)
-#diff $a $b
 xecho ---
 echo $a
 echo $b
 xecho ---
 echo subtract a b
 sa_subtract "$a" "$b"
+xecho ---
 echo subtract b a
 sa_subtract "$b" "$a"
 xecho ---
