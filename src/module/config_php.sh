@@ -44,6 +44,8 @@ EOF
 xsubstitute $src/meta/php.ini $sys_conf/php/php.ini
 xsubstitute $src/meta/php.ini $sys_conf/php/php-fpm.conf
 
+ln -s $sys_conf/php/php.ini $php_install/etc/
+
 xbin $php_install/bin/php
 xbin $php_install/sbin/php-fpm
 

@@ -24,15 +24,11 @@ cp sets/zy $sys_conf -r
 
 
 
-#source $src/module/config_mysql.sh
+source $src/module/config_mysql.sh
 #source $src/module/config_php.sh
-source $src/module/config_nginx.sh
+#source $src/module/config_nginx.sh
 
 echo $report_txt
 mv $sys_conf/report.tpl $report_txt
 xsubstitute $report $report_txt
-
-ln -s $sys_conf/php/php.ini $php_install/etc/
-ln -s $sys_conf/nginx/nginx.conf $nginx_install/conf/
-ln -s $sys_conf/nginx/fcgi.conf $nginx_install/conf/
 echo

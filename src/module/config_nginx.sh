@@ -11,6 +11,9 @@ chown -R www-data:www-data $nginx_log
 xsubstitute $src/meta/nginx.ini $sys_conf/nginx/nginx.conf
 xbin ${nginx_install}/sbin/nginx
 
+ln -s $sys_conf/nginx/nginx.conf $nginx_install/conf/
+ln -s $sys_conf/nginx/fcgi.conf $nginx_install/conf/
+
 #TODO 多域名日志分割
 # xuse $bin nginx/nginx_log_cutter.sh
 # xbin $sys_conf/nginx/nginx_log_cutter.sh
