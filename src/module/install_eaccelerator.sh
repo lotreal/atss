@@ -1,4 +1,6 @@
 #!/bin/bash
+source $meta/php.ini
+
 xprepare $eaccelerator
 
 ${php_install}/bin/phpize

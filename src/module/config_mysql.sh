@@ -1,5 +1,5 @@
 #!/bin/bash
-source $src/meta/mysql.ini
+source $meta/mysql.ini
 
 mkdir -p ${mysql_data}
 chown -R mysql:mysql ${mysql_data}
@@ -12,7 +12,7 @@ chown -R mysql:mysql ${mysql_log}
 xcheck "chmod & chown ${mysql_data} & ${mysql_log}" $?
 
 
-xsubstitute meta/mysql.ini $sys_conf/mysql/my.cnf
+xsubstitute $meta/mysql.ini $sys_conf/mysql/my.cnf
 ln -s $sys_conf/mysql/my.cnf $mysql_data/
 
 DATA_EXIST=
@@ -33,9 +33,10 @@ fi
 
 # todo mysql.server 
 # cp ${mysql_install}/support-files/mysql.server sets/dynamic/
-cp ${mysql_install}/support-files/mysql.server $sys_bin/
+xautosave $mysql_server
+cp ${mysql_install}/support-files/mysql.server $mysql_server
 
-$mysql_server start
+$mysql_server start --socket=$mysql_sock
 xcheck "启动 $mysql_server" $?
 
 if [[ $DATA_EXIST == 0 ]]; then
@@ -51,5 +52,5 @@ else
     echo "【安装警示】目录 $mysql_data/mysql 已存在，跳过初始化数据表，以避免丢失数据！"
 fi
 
-$mysql_server stop
-rm $mysql_data -rf
+# $mysql_server stop
+# rm $mysql_data -rf

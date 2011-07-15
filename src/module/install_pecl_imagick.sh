@@ -1,4 +1,5 @@
 #!/bin/bash
+source $meta/php.ini
 xprepare $pecl_imagick
 xcheck "${php_install}/bin/phpize"
 

@@ -1,4 +1,7 @@
 #!/bin/bash
+source $meta/php.ini
+source $meta/mysql.ini
+
 apply_php_fpm()
 {
     gzip -cd $cache_dir/$(xpackage $php_fpm) | patch -d . -p1
@@ -49,6 +52,7 @@ xcheck "应用 php_fpm 补丁" "apply_php_fpm"
     --with-xmlrpc \
     --enable-zip \
     --enable-soap
+
 xcheck "./configure" $?
 
 xcheck "make ZEND_EXTRA_LIBS='-liconv'"
@@ -58,3 +62,9 @@ xautosave $php_install
 xcheck "ln -s $php_version_install $php_install"
 
 cp php.ini-recommended $php_install/etc
+
+cd ext/ftp/
+$php_install/bin/phpize
+./configure --with-php-config=$php_install/bin/php-config
+make
+make install

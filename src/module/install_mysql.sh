@@ -1,7 +1,10 @@
 #!/bin/bash
+source $meta/mysql.ini
+
 xprepare $mysql
 
 mysql_verion_install=$sys_install/$CURRENT_PACKAGE
+echo $mysql_verion_install
 
 /usr/sbin/groupadd mysql
 xcheck "groupadd mysql" $? w
@@ -26,10 +29,11 @@ cmake . \
 xcheck "cmake" $?
 
 xcheck "make"
-# xcheck "make install"
+xcheck "make install"
 
 # # 创建 mysql 链接
-# xautosave $mysql_install
-# xcheck "ln -s $mysql_verion_install $mysql_install"
+xautosave $mysql_install
+xcheck "ln -s $mysql_verion_install $mysql_install"
 
-# xcheck "ln -s $mysql_install/lib/libmysqlclient.so* /usr/lib/"
+xcheck "ln -sf $mysql_install/lib/libmysqlclient.so* /usr/lib/"
+/sbin/ldconfig

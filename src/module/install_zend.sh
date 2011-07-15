@@ -1,5 +1,5 @@
 #!/bin/bash
-source meta/php.ini
+source $meta/php.ini
 # 复制 ZendOptimizer.so
 # TODO fix x64 zend
 xprepare $zend_optimizer

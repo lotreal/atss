@@ -323,7 +323,7 @@ xautosave()
     : ${1:?"target file/folder is required"}
     declare file=$1
     if [[ -e $file || -h $file ]]; then
-        declare arch_dir=${archive_dir:-$(dirname $file)}
+        declare arch_dir=${_AUTOSAVE:-$(dirname $file)}
         declare arch_file="${arch_dir}${file}.$(date +%Y%m%d_%H%M%S)"
         [[ -e $arch_file ]] && arch_file=${arch_file}_$(openssl rand -base64 3)
         mkdir -p $(dirname $arch_file) && mv $file $arch_file

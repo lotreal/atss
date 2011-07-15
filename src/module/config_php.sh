@@ -1,5 +1,5 @@
 #!/bin/bash
-source $src/meta/php.ini
+source $_META/php.ini
 
 mkdir -p $php_ext_dir
 mkdir -p $php_log
@@ -41,12 +41,18 @@ zend_optimizer.encoder_loader=0
 zend_extension="\${php_ext_dir}/ZendOptimizer.so"
 EOF
 
-xsubstitute $src/meta/php.ini $sys_conf/php/php.ini
-xsubstitute $src/meta/php.ini $sys_conf/php/php-fpm.conf
+xsubstitute $meta/php.ini $sys_conf/php/php.ini
+xsubstitute $meta/php.ini $sys_conf/php/php-fpm.conf
+
+xautosave $php_install/etc/php.ini
+xautosave $php_install/etc/php-fpm.conf
 
 ln -s $sys_conf/php/php.ini $php_install/etc/
+ln -s $sys_conf/php/php-fpm.conf $php_install/etc/
 
 xbin $php_install/bin/php
+
+sed -i s#php_fpm_PID=.*#php_fpm_PID=${php_fpm_pid}# $php_install/sbin/php-fpm
 xbin $php_install/sbin/php-fpm
 
 $php_install/bin/php -v

@@ -1,4 +1,5 @@
 #!/bin/bash
+source $meta/php.ini
 xprepare $pecl_memcache
 xcheck "${php_install}/bin/phpize"
 

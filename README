@@ -31,3 +31,37 @@ make install
 grep \${.*} . -r -o | sort | uniq > vars
 
 wget http://mirror.bjtu.edu.cn/gnu/bash/bash-4.2.tar.gz
+
+
+/opt/atss
+/opt/atss/bin
+/opt/atss/local/nginx
+/opt/atss/local/php
+/opt/atss/local/mysql
+/opt/atss/meta
+
+/var/atss/log
+/var/atss/autosave
+/var/atss/eacache
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

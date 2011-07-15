@@ -1,34 +1,40 @@
-source meta/context.ini
+source ../context.ini
 
-source $src/functions.sh
-source $src/meta/global.ini
+source $_SRC/functions.sh
+source $_META/global.ini
+
+_SET_NAME=zy+
 
 mkdir -p /var/autosrv
+
 # report=/var/autosrv/$(openssl rand -base64 9).ini
 # report_txt=/var/autosrv/$(openssl rand -base64 9).txt
-report=/var/autosrv/report.ini
-report_txt=/var/autosrv/report.txt
-echo ip=$(ifconfig eth0 |grep "inet addr" |cut -d: -f2 |cut -d" " -f1) > $report
 
-mkdir -p $sys_path
-mkdir -p $sys_install
-mkdir -p $sys_conf
-#todo rename archive_dir
-mkdir -p $archive_dir
-mkdir -p $sys_log
-mkdir -p $sys_cache
+_IP=$(ifconfig eth0 |grep "inet addr" |cut -d: -f2 |cut -d" " -f1)
 
-# todo archive
-rm $sys_conf -rf
-cp sets/zy $sys_conf -r
+report=$_VAR/report-$_IP.ini
+report_txt=$_VAR/report-$_IP.txt
 
+echo _IP=$_IP > $report
 
+mkdir -p $_BIN
+mkdir -p $_SBIN
+mkdir -p $_ETC
 
-source $src/module/config_mysql.sh
-#source $src/module/config_php.sh
-#source $src/module/config_nginx.sh
+mkdir -p $_AUTOSAVE
+mkdir -p $_LOG
+mkdir -p $_CACHE
+
+rm $_ETC -rf
+cp sets/$_SET_NAME $_ETC -r
+cp $_SRC/bin/* $_BIN/* -r
+
+source $_SRC/module/config_nginx.sh
+source $_SRC/module/config_php.sh
+source $_SRC/module/config_mysql.sh
+
 
 echo $report_txt
-mv $sys_conf/report.tpl $report_txt
+mv $_ETC/report.tpl $report_txt
 xsubstitute $report $report_txt
 echo

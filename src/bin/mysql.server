@@ -1,0 +1,7 @@
+#!/bin/bash
+source /opt/atss/context.ini
+source $_META/global.ini
+source $_META/mysql.ini
+
+echo $mysql_install/support-files/mysql.server $@ --socket=$mysql_sock
+$mysql_install/support-files/mysql.server $@ --socket=$mysql_sock

@@ -1,0 +1,3 @@
+/opt/atss/bin/php-fpm
+/opt/atss/bin/nginx
+/opt/atss/bin/mysql.server start

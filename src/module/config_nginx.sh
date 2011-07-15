@@ -1,18 +1,20 @@
 #!/bin/bash
-source $src/meta/nginx.ini
+source $_META/nginx.ini
+
 # 创建 www 和 log 目录
-mkdir -p $www
-chmod +w $www
+mkdir -p $_WWW
+chmod +w $_WWW
 
-mkdir -p $nginx_log
-chmod +w $nginx_log
-chown -R www-data:www-data $nginx_log
+mkdir -p $_NGINX_LOG
+chmod +w $_NGINX_LOG
+chown -R www-data:www-data $_NGINX_LOG
 
-xsubstitute $src/meta/nginx.ini $sys_conf/nginx/nginx.conf
-xbin ${nginx_install}/sbin/nginx
+xsubstitute $_META/nginx.ini $_NGINX_ETC/nginx.conf
+xsubstitute $_META/nginx.ini $_NGINX_ETC/sites-enabled/phpmyadmin
+xbin ${_NGINX_INSTALL}/sbin/nginx
 
-ln -s $sys_conf/nginx/nginx.conf $nginx_install/conf/
-ln -s $sys_conf/nginx/fcgi.conf $nginx_install/conf/
+xautosave $_NGINX_INSTALL/conf/nginx.conf
+ln -s $_ETC/nginx/nginx.conf $_NGINX_INSTALL/conf/
 
 #TODO 多域名日志分割
 # xuse $bin nginx/nginx_log_cutter.sh
@@ -24,8 +26,8 @@ ln -s $sys_conf/nginx/fcgi.conf $nginx_install/conf/
 # chown -R www-data:www-data $www
 
 if ps x | grep -v grep | grep -v install.sh | grep "nginx"; then
-    xcheck "${nginx_install}/sbin/nginx -s reload"
+    xcheck "${_NGINX_INSTALL}/sbin/nginx -s reload"
 else
     ulimit -SHn 65535
-    xcheck "${nginx_install}/sbin/nginx"
+    xcheck "${_NGINX_INSTALL}/sbin/nginx"
 fi

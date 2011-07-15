@@ -1,4 +1,6 @@
 #!/bin/bash
+source $meta/php.ini
+source $meta/mysql.ini
 xprepare $pecl_pdo_mysql
 xcheck "${php_install}/bin/phpize"
 

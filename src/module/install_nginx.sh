@@ -1,21 +1,17 @@
 #!/bin/bash
-# 安装Nginx所需的pcre库：
-xprepare $pcre
-xcheck "./configure"
-xcheck "make"
-xcheck "make install"
-
+source $_META/nginx.ini
 
 xprepare $nginx
-nginx_version_install=$sys_install/$CURRENT_PACKAGE
+_NGINX_INSTALL_PREFIX=$_SBIN/$CURRENT_PACKAGE
+cat $context/archives/nginx-0.8.54-custom-ver.diff | patch -d . -p1
 
-if [ ! -d $nginx_version_install ]; then
-    xcheck "./configure --user=www-data --group=www-data --prefix=${nginx_version_install} --with-http_stub_status_module --with-http_ssl_module"
+if [ ! -d $_NGINX_INSTALL_PREFIX ]; then
+    xcheck "./configure --user=www-data --group=www-data --prefix=${_NGINX_INSTALL_PREFIX} --with-http_stub_status_module --with-http_ssl_module"
     xcheck "make"
     xcheck "make install"
+    xautosave $_NGINX_INSTALL
+    ln -s $_NGINX_INSTALL_PREFIX $_NGINX_INSTALL
 else
-    xlog alert "【安装警示】 $nginx_version_install 已存在，跳过安装 nginx"
+    xlog alert "【安装警示】 $_NGINX_INSTALL_PREFIX 已存在，跳过安装 nginx"
 fi
 
-xautosave $nginx_install
-ln -s $nginx_version_install $nginx_install
