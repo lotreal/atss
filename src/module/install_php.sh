@@ -23,6 +23,7 @@ xcheck "应用 php_fpm 补丁" "apply_php_fpm"
     --with-jpeg-dir \
     --with-png-dir \
     --with-ftp \
+    --with-gettext \
     --with-zlib \
     --with-libxml-dir=/usr \
     --enable-xml \

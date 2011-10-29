@@ -1,0 +1,11 @@
+== install super ==
+
+ln -s /lib/libpam.so.0 /lib/libpam.so
+ln -s /lib/libpam_misc.so.0 /lib/libpam_misc.so
+/sbin/ldconfig
+./configure
+make
+make install
+
++ http://manpages.ubuntu.com/manpages/natty/man1/super.1.html
++ https://launchpad.net/ubuntu/natty/+package/super
