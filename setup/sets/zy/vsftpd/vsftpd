@@ -1,3 +1,0 @@
-#%PAM-1.0
-auth       required     pam_userdb.so db=${vsftpd_conf}/user_passwd
-account    required     pam_userdb.so db=${vsftpd_conf}/user_passwd

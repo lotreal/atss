@@ -1,8 +1,0 @@
-server
-{
-    listen 27654;
-    root ${www}/phpMyAdmin-3.3.9-all-languages;
-    access_log ${nginx_log}/phpmyadmin.access.log;
-    include ${nginx_conf}/include/serve_static;
-    include ${nginx_conf}/include/serve_php;
-}

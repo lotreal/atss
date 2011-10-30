@@ -3,14 +3,12 @@ if [[ $HEADER_REQUIRED != "t" ]]; then
 
   # ATSS_ROOT 根目录
   ATSS_ROOT=$(cd $(dirname $(readlink -f $0))/../../ && pwd)
-  ATSS_INI=$ATSS_ROOT/setup/config/atss.ini
 
-  cat<<EOF>$ATSS_INI
-ATSS_ROOT=$ATSS_ROOT
-ATSS_SETUP_CFG=\$ATSS_ROOT/setup/config
-ATSS_SETUP_BIN=\$ATSS_ROOT/setup/bin
-ATSS_SETUP_AUTOSAVE=\$ATSS_ROOT/setup/autosave
-EOF
+  ATSS_INI=/opt/atss/atss.ini
+  if [ ! -e $ATSS_INI ]; then
+      cp $ATSS_ROOT/atss.ini $ATSS_INI
+  fi
+  sed -i 's#ATSS_ROOT=.*$#ATSS_ROOT='${ATSS_ROOT}'#' $ATSS_INI
 
   source $ATSS_INI
 
