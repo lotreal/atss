@@ -1,5 +1,5 @@
 #!/bin/bash
-source $_META/php.ini
+source $ATSS_SETUP_CFG/php.ini
 
 xprepare $zend_optimizer
 cp data/5_2_x_comp/ZendOptimizer.so $php_ext_dir/

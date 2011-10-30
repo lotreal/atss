@@ -1,5 +1,5 @@
 #!/bin/bash
-source $meta/mysql.ini
+source $ATSS_SETUP_CFG/mysql.ini
 
 xprepare $mysql
 

@@ -1,5 +1,5 @@
 #!/bin/bash
-source $_META/nginx.ini
+source $ATSS_SETUP_CFG/nginx.ini
 xprepare $phpmyadmin
 cd .. && cp $CURRENT_PACKAGE $www -r
 

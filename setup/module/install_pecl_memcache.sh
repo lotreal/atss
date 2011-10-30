@@ -1,5 +1,5 @@
 #!/bin/bash
-source $meta/php.ini
+source $ATSS_SETUP_CFG/php.ini
 xprepare $pecl_memcache
 xcheck "${php_install}/bin/phpize"
 

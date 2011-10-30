@@ -1,5 +1,5 @@
 #!/bin/bash
-source $_META/nginx.ini
+source $ATSS_SETUP_CFG/nginx.ini
 
 # 创建 www 和 log 目录
 mkdir -p $_WWW
@@ -9,8 +9,8 @@ mkdir -p $_NGINX_LOG
 chmod +w $_NGINX_LOG
 chown -R www-data:www-data $_NGINX_LOG
 
-xsubstitute $_META/nginx.ini $_NGINX_ETC/nginx.conf
-xsubstitute $_META/nginx.ini $_NGINX_ETC/sites-enabled/phpmyadmin
+xsubstitute $ATSS_SETUP_CFG/nginx.ini $_NGINX_ETC/nginx.conf
+xsubstitute $ATSS_SETUP_CFG/nginx.ini $_NGINX_ETC/sites-enabled/phpmyadmin
 xbin ${_NGINX_INSTALL}/sbin/nginx
 
 xautosave $_NGINX_INSTALL/conf/nginx.conf

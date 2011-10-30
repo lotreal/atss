@@ -290,12 +290,12 @@ download_all() {
         "$nginx" \
         "$phpmyadmin"
     do
-        local package=$cache_dir/$(xpackage $i)
+        local package=$ATSS_SETUP_PKG/$(xpackage $i)
         if [ -s $package ]; then
             echo "$package [found]"
         else
             echo "Error: $package not found!!!download now......"
-            wget $i -P $cache_dir/
+            wget $i -P $ATSS_SETUP_PKG/
             xcheck "下载 $package" $?
       # todo: check diff.gz
             if [ "$i" != "$php_fpm" ]; then
@@ -463,15 +463,15 @@ xconf0()
 }
 
 #TODO 如果没有则下载
-# 依赖 $cache_dir
+# 依赖 $ATSS_SETUP_PKG
 xprepare()
 {
     local uri=$1
-    local package=$cache_dir/$(xpackage $uri)
+    local package=$ATSS_SETUP_PKG/$(xpackage $uri)
     xlog debug "准备安装 $package"
 
     if [ ! -e $package ]; then
-	wget $uri -P $cache_dir
+	wget $uri -P $ATSS_SETUP_PKG
     fi
 
 
@@ -481,11 +481,11 @@ xprepare()
         exit
     fi
 
-    xlog debug "预计解压到 $build_dir/$predict"
+    xlog debug "预计解压到 $ATSS_SETUP_BUILD/$predict"
     CURRENT_PACKAGE=$predict
 
-    [ ! -d $build_dir ] && mkdir -p $build_dir
-    cd $build_dir
+    [ ! -d $ATSS_SETUP_BUILD ] && mkdir -p $ATSS_SETUP_BUILD
+    cd $ATSS_SETUP_BUILD
 
     if [ -d $predict ]; then
         xlog debug "文件夹 $predict 已存在，正在删除……"
@@ -493,8 +493,8 @@ xprepare()
     fi
 
     xlog debug "正在解压 $package"
-    xlog debug "到 $build_dir ……"
-    tar xf $package -C ${build_dir}
+    xlog debug "到 $ATSS_SETUP_BUILD ……"
+    tar xf $package -C ${ATSS_SETUP_BUILD}
 
     xcheck "cd $predict"
 }
@@ -505,8 +505,8 @@ xinstall()
     : ${1:?"xinstall: missing install target"}
 
     local target=$1
-    local install_file=$script_dir/module/install_$target.sh
-    local config_file=$script_dir/module/config_$target.sh
+    local install_file=$ATSS_SETUP_BIN/module/install_$target.sh
+    local config_file=$ATSS_SETUP_BIN/module/config_$target.sh
 
     if [[ "$2" != "--config-only" ]]; then
         if [[ -e $install_file ]]; then

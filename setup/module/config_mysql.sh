@@ -1,5 +1,5 @@
 #!/bin/bash
-source $meta/mysql.ini
+source $ATSS_SETUP_CFG/mysql.ini
 
 mkdir -p ${mysql_data}
 chown -R mysql:mysql ${mysql_data}
@@ -12,7 +12,7 @@ chown -R mysql:mysql ${mysql_log}
 xcheck "chmod & chown ${mysql_data} & ${mysql_log}" $?
 
 
-xsubstitute $meta/mysql.ini $sys_conf/mysql/my.cnf
+xsubstitute $ATSS_SETUP_CFG/mysql.ini $sys_conf/mysql/my.cnf
 ln -s $sys_conf/mysql/my.cnf $mysql_data/
 
 DATA_EXIST=

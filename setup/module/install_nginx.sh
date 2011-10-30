@@ -1,9 +1,9 @@
 #!/bin/bash
-source $_META/nginx.ini
+source $ATSS_SETUP_CFG/nginx.ini
 
 xprepare $nginx
 _NGINX_INSTALL_PREFIX=$_SBIN/$CURRENT_PACKAGE
-cat $context/archives/nginx-0.8.54-custom-ver.diff | patch -d . -p1
+cat $ATSS_SETUP_PKG/nginx-0.8.54-custom-ver.diff | patch -d . -p1
 
 if [ ! -d $_NGINX_INSTALL_PREFIX ]; then
     xcheck "./configure --user=www-data --group=www-data --prefix=${_NGINX_INSTALL_PREFIX} --with-http_stub_status_module --with-http_ssl_module"

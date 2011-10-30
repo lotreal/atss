@@ -1,7 +1,7 @@
-source ../context.ini
+source ../atss.ini
 
-source $_SRC/functions.sh
-source $_META/global.ini
+source $ATSS_SETUP_BIN/functions.sh
+source $ATSS_SETUP_CFG/global.ini
 
 _SET_NAME=zy+
 
@@ -27,11 +27,11 @@ mkdir -p $_CACHE
 
 rm $_ETC -rf
 cp sets/$_SET_NAME $_ETC -r
-cp $_SRC/bin/* $_BIN/* -r
+cp $ATSS_SETUP_BIN/bin/* $_BIN/* -r
 
-source $_SRC/module/config_nginx.sh
-source $_SRC/module/config_php.sh
-source $_SRC/module/config_mysql.sh
+source $ATSS_SETUP_BIN/module/config_nginx.sh
+source $ATSS_SETUP_BIN/module/config_php.sh
+source $ATSS_SETUP_BIN/module/config_mysql.sh
 
 
 echo $report_txt
