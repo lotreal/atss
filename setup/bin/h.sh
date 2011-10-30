@@ -1,15 +1,14 @@
 if [[ $HEADER_REQUIRED != "t" ]]; then
   CFG_PRINT_DEBUG=1
 
-  # ATSS 根目录
-  ATSS=$(cd $(dirname $(readlink -f $0))/../../ && pwd)
-
-  ATSS_INI=$ATSS/setup/config/atss.ini
+  # ATSS_ROOT 根目录
+  ATSS_ROOT=$(cd $(dirname $(readlink -f $0))/../../ && pwd)
+  ATSS_INI=$ATSS_ROOT/setup/config/atss.ini
 
   cat<<EOF>$ATSS_INI
-ATSS=$ATSS
-ATSS_SETUP_CFG=\$ATSS/setup/config
-ATSS_SETUP_BIN=\$ATSS/setup/bin
+ATSS_ROOT=$ATSS_ROOT
+ATSS_SETUP_CFG=\$ATSS_ROOT/setup/config
+ATSS_SETUP_BIN=\$ATSS_ROOT/setup/bin
 EOF
 
   source $ATSS_INI
@@ -19,11 +18,11 @@ EOF
   [[ "x$(getconf LONG_BIT)" == "x64" ]] && source $ATSS_SETUP_CFG/pkg_x64.ini
 
   # 安装文件下载缓存，如没有则自动下载
-  ATSS_SETUP_PKG=$ATSS/archives
+  ATSS_SETUP_PKG=$ATSS_ROOT/archives
   mkdir -p $ATSS_SETUP_PKG
 
-  ATSS_SETUP_LOG=$ATSS/log/install.log
-  ATSS_SETUP_BUILD=$ATSS/build
+  ATSS_SETUP_LOG=$ATSS_ROOT/setup/log/install.log
+  ATSS_SETUP_BUILD=$ATSS_ROOT/setup/build
 
   # default_profile=$ATSS_SETUP_BIN/etc
   # source $default_profile/config.ini

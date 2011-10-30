@@ -1,5 +1,5 @@
 #!/bin/bash
-# TODO source $ATSS/setup/config/atss.ini
+# TODO source $ATSS_ROOT/setup/config/atss.ini
 source /opt/atss/setup/config/atss.ini
 source $ATSS_SETUP_CFG/global.ini
 source $ATSS_SETUP_CFG/mysql.ini

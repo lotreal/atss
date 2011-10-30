@@ -10,7 +10,7 @@ xcheck "groupadd www-data" $? w
 xcheck "useradd www-data" $? w
 
 
-PHP_INI=$sys_conf/php/php.ini
+PHP_INI=$ATSS_RUN_CFG/php/php.ini
 cp $php_install/etc/php.ini-recommended $PHP_INI
 
 sed -i 's#extension_dir = "./"#extension_dir = "${php_ext_dir}"\nextension = "memcache.so"\nextension = "pdo_mysql.so"\nextension = "imagick.so"\nextension = "ftp.so"\n#' $PHP_INI
@@ -41,14 +41,14 @@ zend_optimizer.encoder_loader=0
 zend_extension="\${php_ext_dir}/ZendOptimizer.so"
 EOF
 
-xsubstitute $ATSS_SETUP_CFG/php.ini $sys_conf/php/php.ini
-xsubstitute $ATSS_SETUP_CFG/php.ini $sys_conf/php/php-fpm.conf
+xsubstitute $ATSS_SETUP_CFG/php.ini $ATSS_RUN_CFG/php/php.ini
+xsubstitute $ATSS_SETUP_CFG/php.ini $ATSS_RUN_CFG/php/php-fpm.conf
 
 xautosave $php_install/etc/php.ini
 xautosave $php_install/etc/php-fpm.conf
 
-ln -s $sys_conf/php/php.ini $php_install/etc/
-ln -s $sys_conf/php/php-fpm.conf $php_install/etc/
+ln -s $ATSS_RUN_CFG/php/php.ini $php_install/etc/
+ln -s $ATSS_RUN_CFG/php/php-fpm.conf $php_install/etc/
 
 xbin $php_install/bin/php
 

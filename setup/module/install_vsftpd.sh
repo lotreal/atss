@@ -2,14 +2,14 @@
 xcheck "yum -y install vsftpd db4 db4-tcl db4-utils"
 
 vsftpd_banner=Welcome to HongJu FTP servers
-vsftpd_conf=$sys_conf/vsftpd
-vsftpd_log=$sys_log/vsftpd
+vsftpd_conf=$ATSS_RUN_CFG/vsftpd
+vsftpd_log=$ATSS_RUN_LOG/vsftpd
 
 mkdir -p $vsftpd_log
 # chmod +w $vsftpd_log
 # chown -R www-data:www-data $vsftpd_log
 
-xcp $(xgetconf vsftpd) $sys_conf "www vsftpd_banner vsftpd_conf vsftpd_log"
+xcp $(xgetconf vsftpd) $ATSS_RUN_CFG "www vsftpd_banner vsftpd_conf vsftpd_log"
 
 xautosave /etc/vsftpd/vsftpd.conf
 mv $vsftpd_conf/vsftpd.conf /etc/vsftpd/

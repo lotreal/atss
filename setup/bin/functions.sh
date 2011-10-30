@@ -366,7 +366,7 @@ xgetconf() {
 
 xsetup()
 {
-    : ${sys_conf:?"declare sys_conf first!"}
+    : ${ATSS_RUN_CFG:?"declare ATSS_RUN_CFG first!"}
 
     : ${1:?"config base folder is required"}
     : ${2:?"config file is required"}
@@ -384,7 +384,7 @@ xsetup()
         return 1
     fi
 
-    declare config_hub=$sys_conf/$(dirname $config_file)
+    declare config_hub=$ATSS_RUN_CFG/$(dirname $config_file)
 
     xautosave $config_hub/$(basename $config_file)
     xautosave $config_dir/$(basename $config_file)
@@ -401,7 +401,7 @@ xsetup()
 # xconf $nginx_install nginx/conf/fcgi.conf
 xconf()
 {
-    : ${sys_conf:?"declare sys_conf first!"}
+    : ${ATSS_RUN_CFG:?"declare ATSS_RUN_CFG first!"}
 
     : ${1:?"config base folder is required"}
     : ${2:?"config file is required"}
@@ -419,7 +419,7 @@ xconf()
         return 1
     fi
 
-    declare config_hub=$sys_conf/$(dirname $config_file)
+    declare config_hub=$ATSS_RUN_CFG/$(dirname $config_file)
 
     xautosave $config_hub/$(basename $config_file)
     xautosave $config_dir/$(basename $config_file)
@@ -439,7 +439,7 @@ xconf0()
 {
     : ${1:?"service name is required"}
     : ${2:?"configuration file/folder is required"}
-    : ${sys_conf:?"declare sys_conf first!"}
+    : ${ATSS_RUN_CFG:?"declare ATSS_RUN_CFG first!"}
 
     declare service=$1
     declare config=$2
@@ -456,10 +456,10 @@ xconf0()
     mkdir -p $(dirname $config) && \
 	xcp $template $config "$replace"
 
-    xautosave $sys_conf/$service/$(basename $config)
+    xautosave $ATSS_RUN_CFG/$service/$(basename $config)
 
-    mkdir -p $sys_conf/$service && \
-	ln -s $config $sys_conf/$service/
+    mkdir -p $ATSS_RUN_CFG/$service && \
+	ln -s $config $ATSS_RUN_CFG/$service/
 }
 
 #TODO 如果没有则下载
@@ -540,8 +540,8 @@ xmkpasswd()
 
 xbin() {
         xlog debug "xbin $@"
-        [ ! -d $sys_path ] && mkdir -p $sys_path
-        ln -sf $1 $sys_path
+        [ ! -d $ATSS_BIN ] && mkdir -p $ATSS_BIN
+        ln -sf $1 $ATSS_BIN
     }
 
 # 说明： 复制文件/文件夹的同时，替换文件中的变量

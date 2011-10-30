@@ -17,17 +17,17 @@ report_txt=$_VAR/report-$_IP.txt
 
 echo _IP=$_IP > $report
 
-mkdir -p $_BIN
+mkdir -p $ATSS_RUN_BIN
 mkdir -p $_SBIN
-mkdir -p $_ETC
+mkdir -p $ATSS_RUN_CFG
 
 mkdir -p $_AUTOSAVE
 mkdir -p $_LOG
 mkdir -p $_CACHE
 
-rm $_ETC -rf
-cp sets/$_SET_NAME $_ETC -r
-cp $ATSS_SETUP_BIN/bin/* $_BIN/* -r
+rm $ATSS_RUN_CFG -rf
+cp sets/$_SET_NAME $ATSS_RUN_CFG -r
+cp $ATSS_SETUP_BIN/bin/* $ATSS_RUN_BIN/* -r
 
 source $ATSS_SETUP_BIN/module/config_nginx.sh
 source $ATSS_SETUP_BIN/module/config_php.sh
@@ -35,6 +35,6 @@ source $ATSS_SETUP_BIN/module/config_mysql.sh
 
 
 echo $report_txt
-mv $_ETC/report.tpl $report_txt
+mv $ATSS_RUN_CFG/report.tpl $report_txt
 xsubstitute $report $report_txt
 echo

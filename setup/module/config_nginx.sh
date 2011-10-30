@@ -14,11 +14,11 @@ xsubstitute $ATSS_SETUP_CFG/nginx.ini $_NGINX_ETC/sites-enabled/phpmyadmin
 xbin ${_NGINX_INSTALL}/sbin/nginx
 
 xautosave $_NGINX_INSTALL/conf/nginx.conf
-ln -s $_ETC/nginx/nginx.conf $_NGINX_INSTALL/conf/
+ln -s $ATSS_RUN_CFG/nginx/nginx.conf $_NGINX_INSTALL/conf/
 
 #TODO 多域名日志分割
 # xuse $bin nginx/nginx_log_cutter.sh
-# xbin $sys_conf/nginx/nginx_log_cutter.sh
+# xbin $ATSS_RUN_CFG/nginx/nginx_log_cutter.sh
 # grep nginx_log_cutter.sh /etc/crontab || \
 #     echo "00 00 * * * /bin/bash /webserver/bin/nginx_log_cutter.sh" >> /etc/crontab
 
