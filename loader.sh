@@ -1,4 +1,10 @@
 #!/bin/bash
+# 1. Yum upgrade
+# 2. Install dependence lib
+# 3. Synchronize time via the network
+# 4. Install git
+
+# 预测解压位置
 xpath() {
     for line in $(tar tf $1); do
         [ "${line//\//}" != $line ] && break
@@ -6,13 +12,10 @@ xpath() {
     echo $line | sed "s/^\([^/]*\)\(.*\)$/\1/"
 }
 
-###### 1. upgrade system use yum
-###### 2. install dependence lib use yum
-###### 3. sync date
-###### 4. install git
-
+## 1. Yum upgrade
 yum -y upgrade
 
+## 2. Install dependence lib
 yum -y install \
     gcc gcc-c++ autoconf \
     glib2-devel openssl openssl-devel \
@@ -23,8 +26,10 @@ yum -y install \
     e2fsprogs e2fsprogs-devel \
     ntp screen
 
+## 3. Synchronize time via the network
 /usr/sbin/ntpdate ntp.api.bz
 
+## 4. Install git
 which git
 if [ $? -ne 0 ]; then
     grep /usr/local/lib /etc/ld.so.conf || echo /usr/local/lib >> /etc/ld.so.conf
@@ -40,10 +45,10 @@ if [ $? -ne 0 ]; then
     ./configure --with-curl=/usr/local
     make
     make install
-
-# .gitconfig
+    # TODO .gitconfig
 fi
 
+## keygen for github
 ssh-keygen -t rsa -C "lotreal@gmail.com"
 cat ~/.ssh/id_rsa.pub
 echo git clone git@github.com:lotreal/autosrv.git

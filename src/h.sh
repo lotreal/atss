@@ -1,15 +1,13 @@
 if [[ $_included != "t" ]]; then
   __PrintDebug=1
 
-  # 调用 h.sh 的脚本(比如 install.sh)所在目录。
-  wd=$(dirname $(readlink -f $0))
-  # 工程根目录
-  _HOME=$(cd $wd/../ && pwd)
+  # ATSS 根目录
+  ATSS=$(cd $(dirname $(readlink -f $0))/../ && pwd)
 
-  _CONTEXT_INI=$_HOME/context.ini
+  _CONTEXT_INI=$ATSS/context.ini
 
   cat<<EOF>$_CONTEXT_INI
-_CONTEXT=$_HOME
+_CONTEXT=$ATSS
 _META=\$_CONTEXT
 _SRC=\$_CONTEXT/src
 
@@ -25,13 +23,13 @@ EOF
   [[ "x$(getconf LONG_BIT)" == "x64" ]] && source $_META/pkg_x64.ini
 
   # 安装脚本目录
-  script_dir=$_HOME/src
+  script_dir=$ATSS/src
   # 安装文件下载缓存，如没有则自动下载
-  cache_dir=$_HOME/archives
+  cache_dir=$ATSS/archives
   mkdir -p $cache_dir
 
-  install_log=$_HOME/log/install.log
-  build_dir=$_HOME/build
+  install_log=$ATSS/log/install.log
+  build_dir=$ATSS/build
 
   # default_profile=$script_dir/etc
   # source $default_profile/config.ini

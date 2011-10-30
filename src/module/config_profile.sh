@@ -1,4 +1,4 @@
 #!/bin/bash
-ln -s $sys_conf/screen/.screenrc $HOME
-ln -s $sys_conf/bash/.bashrc $HOME
-ln -s $sys_conf/git/.gitconfig $HOME
+ln -sf $sys_conf/screen/.screenrc $HOME
+ln -sf $sys_conf/bash/.bashrc $HOME
+ln -sf $sys_conf/git/.gitconfig $HOME
