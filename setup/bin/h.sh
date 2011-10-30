@@ -9,6 +9,7 @@ if [[ $HEADER_REQUIRED != "t" ]]; then
 ATSS_ROOT=$ATSS_ROOT
 ATSS_SETUP_CFG=\$ATSS_ROOT/setup/config
 ATSS_SETUP_BIN=\$ATSS_ROOT/setup/bin
+ATSS_SETUP_AUTOSAVE=\$ATSS_ROOT/setup/autosave
 EOF
 
   source $ATSS_INI

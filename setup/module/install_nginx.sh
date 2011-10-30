@@ -2,7 +2,7 @@
 source $ATSS_SETUP_CFG/nginx.ini
 
 xprepare $nginx
-_NGINX_INSTALL_PREFIX=$_SBIN/$CURRENT_PACKAGE
+_NGINX_INSTALL_PREFIX=$ATSS_RUN_LOCAL/$CURRENT_PACKAGE
 cat $ATSS_SETUP_PKG/nginx-0.8.54-custom-ver.diff | patch -d . -p1
 
 if [ ! -d $_NGINX_INSTALL_PREFIX ]; then

@@ -12,18 +12,18 @@ mkdir -p /var/autosrv
 
 _IP=$(ifconfig eth0 |grep "inet addr" |cut -d: -f2 |cut -d" " -f1)
 
-report=$_VAR/report-$_IP.ini
-report_txt=$_VAR/report-$_IP.txt
+report=$ATSS_RUN_VAR/report-$_IP.ini
+report_txt=$ATSS_RUN_VAR/report-$_IP.txt
 
 echo _IP=$_IP > $report
 
 mkdir -p $ATSS_RUN_BIN
-mkdir -p $_SBIN
+mkdir -p $ATSS_RUN_LOCAL
 mkdir -p $ATSS_RUN_CFG
 
-mkdir -p $_AUTOSAVE
-mkdir -p $_LOG
-mkdir -p $_CACHE
+mkdir -p $ATSS_SETUP_AUTOSAVE
+mkdir -p $ATSS_RUN_LOG
+mkdir -p $ATSS_RUN_CACHE
 
 rm $ATSS_RUN_CFG -rf
 cp sets/$_SET_NAME $ATSS_RUN_CFG -r

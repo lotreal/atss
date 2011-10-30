@@ -3,7 +3,7 @@ source $ATSS_SETUP_CFG/mysql.ini
 
 xprepare $mysql
 
-mysql_verion_install=$sys_install/$CURRENT_PACKAGE
+mysql_verion_install=$ATSS_RUN_LOCAL/$CURRENT_PACKAGE
 echo $mysql_verion_install
 
 /usr/sbin/groupadd mysql

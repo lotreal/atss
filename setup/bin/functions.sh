@@ -323,7 +323,7 @@ xautosave()
     : ${1:?"target file/folder is required"}
     declare file=$1
     if [[ -e $file || -h $file ]]; then
-        declare arch_dir=${_AUTOSAVE:-$(dirname $file)}
+        declare arch_dir=${ATSS_SETUP_AUTOSAVE:-$(dirname $file)}
         declare arch_file="${arch_dir}${file}.$(date +%Y%m%d_%H%M%S)"
         [[ -e $arch_file ]] && arch_file=${arch_file}_$(openssl rand -base64 3)
         mkdir -p $(dirname $arch_file) && mv $file $arch_file
@@ -540,8 +540,8 @@ xmkpasswd()
 
 xbin() {
         xlog debug "xbin $@"
-        [ ! -d $ATSS_BIN ] && mkdir -p $ATSS_BIN
-        ln -sf $1 $ATSS_BIN
+        [ ! -d $ATSS_RUN_BIN ] && mkdir -p $ATSS_RUN_BIN
+        ln -sf $1 $ATSS_RUN_BIN
     }
 
 # 说明： 复制文件/文件夹的同时，替换文件中的变量

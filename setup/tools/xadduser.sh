@@ -38,5 +38,5 @@ ln -s $nginx_conf/sites-available/$domain $nginx_conf/sites-enabled/
 
 xreplace $nginx_conf/sites-available/$domain "www domain nginx_conf nginx_log"
 
-xcheck "${ATSS_BIN}/nginx -t"
-xcheck "${ATSS_BIN}/nginx -s reload"
+xcheck "${ATSS_RUN_BIN}/nginx -t"
+xcheck "${ATSS_RUN_BIN}/nginx -s reload"

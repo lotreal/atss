@@ -9,3 +9,8 @@ make install
 
 + http://manpages.ubuntu.com/manpages/natty/man1/super.1.html
 + https://launchpad.net/ubuntu/natty/+package/super
+
+== flvps error ==
+
+make: *** [imagick_class.lo] Error 1
+2011-10-30 11:04:24 +08:00 !!! [____ERROR]  {/opt/atss/build/imagick-3.0.1} make 失败！错误码: 2

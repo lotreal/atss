@@ -4,12 +4,12 @@ source $ATSS_SETUP_CFG/mysql.ini
 
 apply_php_fpm()
 {
-    gzip -cd $cache_dir/$(xpackage $php_fpm) | patch -d . -p1
+    gzip -cd $ATSS_SETUP_PKG/$(xpackage $php_fpm) | patch -d . -p1
 }
 
 xprepare $php
 
-php_version_install=$sys_install/$CURRENT_PACKAGE
+php_version_install=$ATSS_RUN_LOCAL/$CURRENT_PACKAGE
 
 xcheck "应用 php_fpm 补丁" "apply_php_fpm"
 
