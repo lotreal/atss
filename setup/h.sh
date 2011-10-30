@@ -1,5 +1,5 @@
-if [[ $_included != "t" ]]; then
-  __PrintDebug=1
+if [[ $HEADER_REQUIRED != "t" ]]; then
+  CFG_PRINT_DEBUG=1
 
   # ATSS 根目录
   ATSS=$(cd $(dirname $(readlink -f $0))/../ && pwd)
@@ -65,5 +65,5 @@ EOF
   xlog debug "#   函数库: $script_dir/functions.sh"
   xlog debug "##############################################################################"
 
-  _included=t
+  HEADER_REQUIRED=t
 fi

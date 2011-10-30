@@ -595,7 +595,7 @@ xbin() {
         local message="${1}"; shift
 
         case ${severity} in
-	    debug) if [[ ${__PrintDebug:-0}   -ne 1 ]]; then return 0; fi ;;
+	    debug) if [[ ${CFG_PRINT_DEBUG:-0}   -ne 1 ]]; then return 0; fi ;;
 	    info) if [[ ${__PrintInfo:-1}    -ne 1 ]]; then return 0; fi ;;
 	    notice) if [[ ${__PrintNotice:-1}  -ne 1 ]]; then return 0; fi ;;
 	    warning) if [[ ${__PrintWarning:-1} -ne 1 ]]; then return 0; fi ;;
