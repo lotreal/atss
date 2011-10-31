@@ -13,7 +13,7 @@ mkdir -p $ATSS_RUN_CACHE
 rm $ATSS_RUN_CFG -rf
 cp $ATSS_CFG_TEMPLATES/$ATSS_CFG_TPL $ATSS_RUN_CFG -r
 
-IP_ADDR=$(ifconfig eth0 |grep "inet addr" |cut -d: -f2 |cut -d" " -f1)
+IP_ADDR=$(ifconfig | grep "inet addr" | sed /^.*127.0.0.1.*$/d | cut -d: -f2 | cut -d" " -f1)
 
 ATSS_REPORT_INI=$ATSS_RUN_CFG/report-$IP_ADDR.ini
 ATSS_REPORT_TXT=$ATSS_RUN_CFG/report-$IP_ADDR.txt
