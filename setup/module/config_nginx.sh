@@ -2,19 +2,19 @@
 source $ATSS_SETUP_CFG/nginx.ini
 
 # 创建 www 和 log 目录
-mkdir -p $_WWW
-chmod +w $_WWW
+mkdir -p $ATSS_WWW
+chmod +w $ATSS_WWW
 
-mkdir -p $_NGINX_LOG
-chmod +w $_NGINX_LOG
-chown -R www-data:www-data $_NGINX_LOG
+mkdir -p $ATSS_NGINX_LOG
+chmod +w $ATSS_NGINX_LOG
+chown -R www-data:www-data $ATSS_NGINX_LOG
 
-xsubstitute $ATSS_SETUP_CFG/nginx.ini $_NGINX_ETC/nginx.conf
-xsubstitute $ATSS_SETUP_CFG/nginx.ini $_NGINX_ETC/sites-enabled/phpmyadmin
-xbin ${_NGINX_INSTALL}/sbin/nginx
+xsubstitute $ATSS_SETUP_CFG/nginx.ini $ATSS_NGINX_CFG/nginx.conf
+xsubstitute $ATSS_SETUP_CFG/nginx.ini $ATSS_NGINX_CFG/sites-enabled/phpmyadmin
+xbin ${ATSS_NGINX_INSTALL}/sbin/nginx
 
-xautosave $_NGINX_INSTALL/conf/nginx.conf
-ln -s $ATSS_RUN_CFG/nginx/nginx.conf $_NGINX_INSTALL/conf/
+xautosave $ATSS_NGINX_INSTALL/conf/nginx.conf
+ln -s $ATSS_RUN_CFG/nginx/nginx.conf $ATSS_NGINX_INSTALL/conf/
 
 #TODO 多域名日志分割
 # xuse $bin nginx/nginx_log_cutter.sh
@@ -26,8 +26,8 @@ ln -s $ATSS_RUN_CFG/nginx/nginx.conf $_NGINX_INSTALL/conf/
 # chown -R www-data:www-data $www
 
 if ps x | grep -v grep | grep -v install.sh | grep "nginx"; then
-    xcheck "${_NGINX_INSTALL}/sbin/nginx -s reload"
+    xcheck "${ATSS_NGINX_INSTALL}/sbin/nginx -s reload"
 else
     ulimit -SHn 65535
-    xcheck "${_NGINX_INSTALL}/sbin/nginx"
+    xcheck "${ATSS_NGINX_INSTALL}/sbin/nginx"
 fi

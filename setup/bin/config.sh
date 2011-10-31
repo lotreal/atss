@@ -1,5 +1,5 @@
+#!/bin/bash
 source /opt/atss/atss.ini
-
 source $ATSS_SETUP_BIN/functions.sh
 
 mkdir -p $ATSS_RUN_BIN
