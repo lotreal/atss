@@ -1,6 +1,6 @@
 #!/bin/bash
-source /opt/atss/atss.ini
-source $ATSS_SETUP_BIN/functions.sh
+source ../lib/functions.sh
+atss_config
 
 mkdir -p $ATSS_RUN_BIN
 mkdir -p $ATSS_RUN_LOCAL
@@ -26,5 +26,5 @@ source $ATSS_ROOT/setup/module/config_nginx.sh
 
 echo $ATSS_REPORT_TXT
 cp $ATSS_ROOT/setup/report/txt.tpl $ATSS_REPORT_TXT
-xsubstitute $ATSS_REPORT_INI $ATSS_REPORT_TXT
+atss_parse_tpl $ATSS_REPORT_INI $ATSS_REPORT_TXT
 echo

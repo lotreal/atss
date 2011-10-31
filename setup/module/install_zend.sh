@@ -9,4 +9,4 @@ chcon -t textrel_shlib_t $php_ext_dir/ZendOptimizer.so
 
 mkdir -p $zend_cache
 chmod -R +w $zend_cache
-chown -R www-data:www-data $zend_cache
+chown -R $ATSS_WWW_USER:$ATSS_WWW_GROUP $zend_cache

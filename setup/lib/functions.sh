@@ -1,4 +1,13 @@
 #!/bin/bash
+atss_config() {
+    if [ -e /opt/atss/atss.ini ]; then
+	source /opt/atss/atss.ini
+    fi
+    if [ -e ~/atss.ini ]; then
+	source ~/atss.ini
+    fi
+}
+
 xecho() {
     local s=$@
     local len=${#s}
@@ -20,32 +29,6 @@ xecho() {
 
     post=$(($width-$len-1))
     printf "| $s%${post}s|\n"
-}
-
-
-atss_tpl_verbose() {
-    local pattern=$1
-    local vars=$(atss_tpl_vars $2)
-
-    xecho ---
-    xecho === Substitute Variable List ===
-    xecho ---
-    for var in $pattern; do
-        xecho \${$var} =\> $(eval echo \$$var)
-    done
-    xecho ---
-    xecho === INI Only ===
-    xecho ---
-    for var in $(atss_words_subtract "$pattern" "$vars"); do
-        xecho \${$var} =\> $(eval echo \$$var)
-    done
-    xecho ---
-    xecho === Template Only ===
-    xecho ---
-    for var in $(atss_words_subtract "$vars" "$pattern"); do
-        xecho \${$var} =\> $(eval echo \$$var)
-    done
-    xecho ---
 }
 
 # 说明： 替换文件中的变量，变量需为 ${mysql_port} 格式
@@ -81,27 +64,51 @@ _substitute_() {
 
 
 atss_parse_tpl() {
-    : ${1:?"pattern is required"}
-    : ${2:?"file is required"}
+    : ${1:?"model is required"}
+    : ${2:?"template is required"}
 
-    local pattern=$1
-    local file=$2
+    local model=$1
+    local template=$2
 
-    if [ -e "$pattern" ]; then
-        source $pattern
-        pattern=$(atss_ini_keys $pattern)
+    source $model
+    local keys=$(atss_ini_keys $model)
+    local vars=$(atss_tpl_vars $template)
+echo $vars
+return
+    # verbose start
+    if [ "verbose" == "verbose" ]; then
+        xecho ---
+        xecho === $model ===
+        for var in $keys; do
+            xecho \${$var} =\> $(eval echo \$$var)
+        done
+
+        xecho 
+        xecho === Missed on $template ===
+        for var in $(atss_words_subtract "$vars" "$keys"); do
+            xecho \${$var} =\> $(eval echo \$$var)
+        done
+
+        xecho
+        xecho === Unused ===
+        for var in $(atss_words_subtract "$keys" "$vars"); do
+            xecho \${$var} =\> $(eval echo \$$var)
+        done
+
+        xecho ---
     fi
+    # verbose end
 
-    atss_tpl_verbose "$pattern" "$file"
+    atss_parse_tpl_interactive "$keys" "$template"
+return
 
-    atss_parse_tpl_interactive "$pattern" "$file"
 
-    if [ -d "$file" ]; then
-        for f in $( find $file -type f ); do
-            _substitute "$pattern" "$f"
+    if [ -d "$template" ]; then
+        for f in $( find $template -type f ); do
+            _substitute "$model" "$f"
         done
     else
-        _substitute "$pattern" "$file"
+        _substitute "$model" "$template"
     fi
 
 
@@ -111,9 +118,8 @@ atss_parse_tpl() {
 }
 
 atss_parse_tpl_interactive() {
-    local pattern=$1
-    local file=$2
-
+    local model=$1
+    local template=$2
     echo
     read -p "(C): Continue; (Q): Quit; (R): Reload; (D): Detail. (Default: C): " CONTINUE
 
@@ -122,9 +128,9 @@ atss_parse_tpl_interactive() {
             return 0
             ;;
         D|d)
-            re=$\{\\\(${pattern// /\\\|}\\\)}
+            re=$\{\\\(${model// /\\\|}\\\)}
             echo $re
-            grep -n -r --color=auto $re $file
+            grep -n -r --color=auto $re $template
             ;;
         Q|q)
             exit
@@ -132,31 +138,35 @@ atss_parse_tpl_interactive() {
         *|R|r)
             ;;
     esac
-    atss_parse_tpl_interactive "$pattern" "$file"
+    atss_parse_tpl_interactive "$model" "$template"
 }
 
+# atss_ini_keys $INI_FILE
+# 输出 INI_FILE 中的所有配置键，以空格间隔。
 atss_ini_keys() {
     : ${1:?"($(caller 0)) file is required"}
-    # grep '^[a-zA-Z0-9_]*=.*$' $1 |cut -d'=' -f1
     l=$(grep '^[a-zA-Z0-9_]*=.*$' $1 |cut -d'=' -f1)
     echo ${l/'\n'/ }
-    # for line in $l; do
-    #     echo $line
-    # done
 }
 
-# my.cnf.tpl => mysql_install mysql_port ...
+# atss_tpl_vars $TPL_FILE
+# 输出 TPL_FILE 中的所有变量，以空格间隔。
+# 示例：my.cnf.tpl => mysql_install mysql_port ...
 atss_tpl_vars() {
     : ${1:?"($(caller 0)) file is required"}
     {
         while read line ; do
-            while [[ "$line" =~ '\$\{([a-zA-Z_][a-zA-Z_0-9]*)\}' ]] ; do
+echo $line
+echo ';;;;;;'
+            # while [[ "$line" =~ '\$\{([a-zA-Z]*[a-zA-Z_0-9]*)\}' ]] ; do
+            while [[ "$line" =~ '\$\{([a-zA-Z_0-9]*)\}' ]] ; do
+echo xxxxxxxxxxxx
                 LHS=${BASH_REMATCH[1]}
                 echo $LHS
                 line=${line//$LHS/}
             done
         done < $1
-    } | sort | uniq
+    } # | sort | uniq
 }
 
 # a='aaa bbb ccc ddd'
@@ -176,9 +186,9 @@ atss_words_subtract() {
         [[ "$f" == '0' ]] && echo $aa
     done
     return 0
-    # pattern=$(echo $b | sed "s/ / \\\|/g")
+    # model=$(echo $b | sed "s/ / \\\|/g")
     # xecho ---
-    # echo $a | sed "s/\($pattern\)//g"
+    # echo $a | sed "s/\($model\)//g"
     # xecho ---
 }
 

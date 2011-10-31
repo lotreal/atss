@@ -12,7 +12,7 @@ chown -R mysql:mysql ${mysql_log}
 xcheck "chmod & chown ${mysql_data} & ${mysql_log}" $?
 
 
-xsubstitute $ATSS_SETUP_CFG/mysql.ini $ATSS_RUN_CFG/mysql/my.cnf
+atss_parse_tpl $ATSS_SETUP_CFG/mysql.ini $ATSS_RUN_CFG/mysql/my.cnf
 ln -s $ATSS_RUN_CFG/mysql/my.cnf $mysql_data/
 
 DATA_EXIST=

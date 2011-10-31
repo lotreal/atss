@@ -7,7 +7,7 @@ vsftpd_log=$ATSS_RUN_LOG/vsftpd
 
 mkdir -p $vsftpd_log
 # chmod +w $vsftpd_log
-# chown -R www-data:www-data $vsftpd_log
+# chown -R $ATSS_WWW_USER:$ATSS_WWW_GROUP $vsftpd_log
 
 xcp $(xgetconf vsftpd) $ATSS_RUN_CFG "www vsftpd_banner vsftpd_conf vsftpd_log"
 

@@ -41,8 +41,8 @@ zend_optimizer.encoder_loader=0
 zend_extension="\${php_ext_dir}/ZendOptimizer.so"
 EOF
 
-xsubstitute $ATSS_SETUP_CFG/php.ini $ATSS_RUN_CFG/php/php.ini
-xsubstitute $ATSS_SETUP_CFG/php.ini $ATSS_RUN_CFG/php/php-fpm.conf
+atss_parse_tpl $ATSS_SETUP_CFG/php.ini $ATSS_RUN_CFG/php/php.ini
+atss_parse_tpl $ATSS_SETUP_CFG/php.ini $ATSS_RUN_CFG/php/php-fpm.conf
 
 xautosave $php_install/etc/php.ini
 xautosave $php_install/etc/php-fpm.conf
