@@ -1,13 +1,4 @@
 #!/bin/bash
-atss_config() {
-    if [ -e /opt/atss/atss.ini ]; then
-	source /opt/atss/atss.ini
-    fi
-    if [ -e ~/atss.ini ]; then
-	source ~/atss.ini
-    fi
-}
-
 xecho() {
     local s=$@
     local len=${#s}
@@ -71,32 +62,30 @@ atss_parse_tpl() {
     local template=$2
 
     source $model
+
     local keys=$(atss_ini_keys $model)
     local vars=$(atss_tpl_vars $template)
 
-    local union=$(atss_words_merge "$keys" "$vars")
-    local subset=$(atss_words_merge "$keys" "$vars")
-    echo $all
-xecho ---
-return
+    local union=$(atss_words_union "$keys" "$vars")
+    local unused=$(atss_words_except "$keys" "$vars")
+    local missed=$(atss_words_except "$vars" "$keys")
+    local S=
+
     # verbose start
     if [ "verbose" == "verbose" ]; then
         xecho ---
-        xecho === $model ===
-        for var in $keys; do
-            xecho \${$var} =\> $(eval echo \$$var)
-        done
-
-        xecho 
-        xecho === Missed on $template ===
-        for var in $(atss_words_except "$vars" "$keys"); do
-            xecho \${$var} =\> $(eval echo \$$var)
-        done
-
-        xecho
-        xecho === Unused ===
-        for var in $(atss_words_except "$keys" "$vars"); do
-            xecho \${$var} =\> $(eval echo \$$var)
+        clr_green "    Model:  $model"
+        clr_cyan  " Template:  $template"
+        echo
+        for var in $union; do
+            if atss_words_exists "$unused" "$var" ; then
+                S=$(clr_magenta "U")
+            elif atss_words_exists "$missed" "$var" ; then
+                S=$(clr_red "M")
+            else
+                S="-"
+            fi
+            echo "  $S  $var = $(eval echo \$$var)"
         done
 
         xecho ---
@@ -104,21 +93,16 @@ return
     # verbose end
 
     atss_parse_tpl_interactive "$keys" "$template"
-return
-
 
     if [ -d "$template" ]; then
         for f in $( find $template -type f ); do
             _substitute "$model" "$f"
         done
     else
-        _substitute "$model" "$template"
+        _substitute "$union" "$template"
     fi
 
-
-    xecho ---
     xecho = [OK] =
-    xecho ---
 }
 
 atss_parse_tpl_interactive() {
@@ -168,42 +152,6 @@ atss_tpl_vars() {
             done
         done < $1
     } | sort | uniq
-}
-
-atss_words_merge() {
-    {
-        for a in $1; do
-            echo $a
-        done
-        for a in $2; do
-            echo $a
-        done
-    } | sort | uniq
-}
-
-
-# 差集
-# a='aaa bbb ccc ddd'
-# b='bbb ddd'
-# atss_words_except $a $b => 'aaa ccc'
-atss_words_except() {
-    local a=$1
-    local b=$2
-    for aa in $a; do
-        local f=0
-        for bb in $b; do
-            if [[ "$aa" == "$bb" ]]; then
-                f=1
-                continue
-            fi
-        done
-        [[ "$f" == '0' ]] && echo $aa
-    done
-    return 0
-    # model=$(echo $b | sed "s/ / \\\|/g")
-    # xecho ---
-    # echo $a | sed "s/\($model\)//g"
-    # xecho ---
 }
 
 # ==============================================================

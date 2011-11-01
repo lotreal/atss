@@ -1,6 +1,5 @@
 #!/bin/bash
-source ../lib/functions.sh
-atss_config
+source ../lib/atss.sh
 
 mkdir -p $ATSS_RUN_BIN
 mkdir -p $ATSS_RUN_LOCAL
