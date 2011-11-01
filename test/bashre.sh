@@ -1,4 +1,4 @@
-#!/bin.bash
+#!/bin/bash
 
 if [[ $# -lt 2 ]]; then
     echo "Usage: $0 PATTERN STRINGS..."

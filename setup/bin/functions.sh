@@ -36,13 +36,13 @@ atss_tpl_verbose() {
     xecho ---
     xecho === INI Only ===
     xecho ---
-    for var in $(atss_words_subtract "$pattern" "$vars"); do
+    for var in $(atss_words_except "$pattern" "$vars"); do
         xecho \${$var} =\> $(eval echo \$$var)
     done
     xecho ---
     xecho === Template Only ===
     xecho ---
-    for var in $(atss_words_subtract "$vars" "$pattern"); do
+    for var in $(atss_words_except "$vars" "$pattern"); do
         xecho \${$var} =\> $(eval echo \$$var)
     done
     xecho ---
@@ -161,8 +161,8 @@ atss_tpl_vars() {
 
 # a='aaa bbb ccc ddd'
 # b='bbb ddd'
-# atss_words_subtract $a $b => 'aaa ccc'
-atss_words_subtract() {
+# atss_words_except $a $b => 'aaa ccc'
+atss_words_except() {
     local a=$1
     local b=$2
     for aa in $a; do

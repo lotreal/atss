@@ -73,7 +73,11 @@ atss_parse_tpl() {
     source $model
     local keys=$(atss_ini_keys $model)
     local vars=$(atss_tpl_vars $template)
-echo $vars
+
+    local union=$(atss_words_merge "$keys" "$vars")
+    local subset=$(atss_words_merge "$keys" "$vars")
+    echo $all
+xecho ---
 return
     # verbose start
     if [ "verbose" == "verbose" ]; then
@@ -85,13 +89,13 @@ return
 
         xecho 
         xecho === Missed on $template ===
-        for var in $(atss_words_subtract "$vars" "$keys"); do
+        for var in $(atss_words_except "$vars" "$keys"); do
             xecho \${$var} =\> $(eval echo \$$var)
         done
 
         xecho
         xecho === Unused ===
-        for var in $(atss_words_subtract "$keys" "$vars"); do
+        for var in $(atss_words_except "$keys" "$vars"); do
             xecho \${$var} =\> $(eval echo \$$var)
         done
 
@@ -154,25 +158,35 @@ atss_ini_keys() {
 # 示例：my.cnf.tpl => mysql_install mysql_port ...
 atss_tpl_vars() {
     : ${1:?"($(caller 0)) file is required"}
+    local regex='\$\{([a-zA-Z_0-9]+)\}'
     {
         while read line ; do
-echo $line
-echo ';;;;;;'
-            # while [[ "$line" =~ '\$\{([a-zA-Z]*[a-zA-Z_0-9]*)\}' ]] ; do
-            while [[ "$line" =~ '\$\{([a-zA-Z_0-9]*)\}' ]] ; do
-echo xxxxxxxxxxxx
+            while [[ $line =~ $regex ]] ; do
                 LHS=${BASH_REMATCH[1]}
                 echo $LHS
                 line=${line//$LHS/}
             done
         done < $1
-    } # | sort | uniq
+    } | sort | uniq
 }
 
+atss_words_merge() {
+    {
+        for a in $1; do
+            echo $a
+        done
+        for a in $2; do
+            echo $a
+        done
+    } | sort | uniq
+}
+
+
+# 差集
 # a='aaa bbb ccc ddd'
 # b='bbb ddd'
-# atss_words_subtract $a $b => 'aaa ccc'
-atss_words_subtract() {
+# atss_words_except $a $b => 'aaa ccc'
+atss_words_except() {
     local a=$1
     local b=$2
     for aa in $a; do
