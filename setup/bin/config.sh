@@ -1,4 +1,5 @@
 #!/bin/bash
+cd $(dirname $(test -L "$0" && readlink "$0" || echo "$0"))
 source ../lib/atss.sh
 
 mkdir -p $ATSS_RUN_BIN

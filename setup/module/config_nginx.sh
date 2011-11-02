@@ -10,8 +10,6 @@ chmod +w $ATSS_NGINX_LOG
 chown -R $ATSS_WWW_USER:$ATSS_WWW_GROUP $ATSS_NGINX_LOG
 
 atss_parse_tpl $ATSS_SETUP_CFG/nginx.ini $ATSS_NGINX_CFG/nginx.conf
-less $ATSS_NGINX_CFG/nginx.conf
-exit
 atss_parse_tpl $ATSS_SETUP_CFG/nginx.ini $ATSS_NGINX_CFG/sites-enabled/phpmyadmin
 xbin ${ATSS_NGINX_INSTALL}/sbin/nginx
 
