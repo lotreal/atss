@@ -1,7 +1,8 @@
 #!/bin/bash
 xecho() {
     local s=$@
-    local len=${#s}
+    local rmcolor=$(echo $s | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g")
+    local len=${#rmcolor}
     local width=80
     local pre
     local post
@@ -74,9 +75,9 @@ atss_parse_tpl() {
     # verbose start
     if [ "verbose" == "verbose" ]; then
         xecho ---
-        clr_green "    Model:  $model"
-        clr_cyan  " Template:  $template"
-        echo
+        xecho $(clr_green " Model:     $model")
+        xecho $(clr_cyan  " Template:  $template")
+        xecho
         for var in $union; do
             if atss_words_exists "$unused" "$var" ; then
                 S=$(clr_magenta "U")
@@ -85,7 +86,7 @@ atss_parse_tpl() {
             else
                 S="-"
             fi
-            echo "  $S  $var = $(eval echo \$$var)"
+            xecho "$S $var = $(eval echo \$$var)"
         done
 
         xecho ---
@@ -295,7 +296,7 @@ xautosave()
     : ${1:?"target file/folder is required"}
     declare file=$1
     if [[ -e $file || -h $file ]]; then
-        declare arch_dir=${ATSS_SETUP_AUTOSAVE:-$(dirname $file)}
+        declare arch_dir=${ATSS_AUTOSAVE:-$(dirname $file)}
         declare arch_file="${arch_dir}${file}.$(date +%Y%m%d_%H%M%S)"
         [[ -e $arch_file ]] && arch_file=${arch_file}_$(openssl rand -base64 3)
         mkdir -p $(dirname $arch_file) && mv $file $arch_file

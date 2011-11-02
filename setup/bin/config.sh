@@ -5,7 +5,7 @@ mkdir -p $ATSS_RUN_BIN
 mkdir -p $ATSS_RUN_LOCAL
 mkdir -p $ATSS_RUN_CFG
 
-mkdir -p $ATSS_SETUP_AUTOSAVE
+mkdir -p $ATSS_AUTOSAVE
 mkdir -p $ATSS_RUN_LOG
 mkdir -p $ATSS_RUN_CACHE
 
